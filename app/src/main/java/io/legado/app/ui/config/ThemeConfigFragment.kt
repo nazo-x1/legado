@@ -110,14 +110,8 @@ class ThemeConfigFragment : PreferenceFragment(),
         menu.applyTint(requireContext())
     }
 
+    // here!
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
-            R.id.menu_theme_mode -> {
-                AppConfig.isNightTheme = !AppConfig.isNightTheme
-                ThemeConfig.applyDayNight(requireContext())
-                return true
-            }
-        }
         return false
     }
 
@@ -270,8 +264,9 @@ class ThemeConfigFragment : PreferenceFragment(),
         }
     }
 
+    // here!
     private fun upTheme(isNightTheme: Boolean) {
-        if (AppConfig.isNightTheme == isNightTheme) {
+        if (!isNightTheme) {
             listView.post {
                 ThemeConfig.applyTheme(requireContext())
                 recreateActivities()

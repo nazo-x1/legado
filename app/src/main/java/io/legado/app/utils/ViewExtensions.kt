@@ -19,10 +19,8 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
-import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.TintHelper
 import splitties.systemservices.inputMethodManager
-
 import java.lang.reflect.Field
 
 
@@ -55,14 +53,14 @@ fun View.disableAutoFill() = run {
 
 fun View.applyTint(
     @ColorInt color: Int,
-    isDark: Boolean = AppConfig.isNightTheme(context)
+    isDark: Boolean = false
 ) {
     TintHelper.setTintAuto(this, color, false, isDark)
 }
 
 fun View.applyBackgroundTint(
     @ColorInt color: Int,
-    isDark: Boolean = AppConfig.isNightTheme
+    isDark: Boolean = false
 ) {
     if (background == null) {
         setBackgroundColor(color)

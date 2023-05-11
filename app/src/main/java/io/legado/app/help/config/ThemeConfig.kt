@@ -28,16 +28,6 @@ object ThemeConfig {
         ArrayList(cList)
     }
 
-    fun getTheme() = when {
-        AppConfig.isEInkMode -> Theme.EInk
-        AppConfig.isNightTheme -> Theme.Dark
-        else -> Theme.Light
-    }
-
-    fun isDarkTheme(): Boolean {
-        return getTheme() == Theme.Dark
-    }
-
     fun applyDayNight(context: Context) {
         applyTheme(context)
         initNightMode()
@@ -46,17 +36,13 @@ object ThemeConfig {
     }
 
     private fun initNightMode() {
-        val targetMode =
-            if (AppConfig.isNightTheme) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
+        val targetMode = AppCompatDelegate.MODE_NIGHT_NO
         AppCompatDelegate.setDefaultNightMode(targetMode)
     }
 
+    // here!
     fun getBgImage(context: Context, metrics: DisplayMetrics): Bitmap? {
-        val bgCfg = when (getTheme()) {
+        val bgCfg = when (Theme.EInk) {
             Theme.Light -> Pair(
                 context.getPrefString(PreferKey.bgImage),
                 context.getPrefInt(PreferKey.bgImageBlurring, 0)
@@ -142,7 +128,6 @@ object ThemeConfig {
             context.putPrefInt(PreferKey.cBackground, background)
             context.putPrefInt(PreferKey.cBBackground, bBackground)
         }
-        AppConfig.isNightTheme = config.isNightTheme
         applyDayNight(context)
     }
 
@@ -196,56 +181,12 @@ object ThemeConfig {
      * 更新主题
      */
     fun applyTheme(context: Context) = with(context) {
-        when {
-            AppConfig.isEInkMode -> {
-                ThemeStore.editTheme(this)
-                    .primaryColor(Color.WHITE)
-                    .accentColor(Color.BLACK)
-                    .backgroundColor(Color.WHITE)
-                    .bottomBackground(Color.WHITE)
-                    .apply()
-            }
-            AppConfig.isNightTheme -> {
-                val primary =
-                    getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
-                val accent =
-                    getPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_800))
-                var background =
-                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
-                if (ColorUtils.isColorLight(background)) {
-                    background = getCompatColor(R.color.md_grey_900)
-                    putPrefInt(PreferKey.cNBackground, background)
-                }
-                val bBackground =
-                    getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
-                ThemeStore.editTheme(this)
-                    .primaryColor(ColorUtils.withAlpha(primary, 1f))
-                    .accentColor(ColorUtils.withAlpha(accent, 1f))
-                    .backgroundColor(ColorUtils.withAlpha(background, 1f))
-                    .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
-                    .apply()
-            }
-            else -> {
-                val primary =
-                    getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_brown_500))
-                val accent =
-                    getPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_red_600))
-                var background =
-                    getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
-                if (!ColorUtils.isColorLight(background)) {
-                    background = getCompatColor(R.color.md_grey_100)
-                    putPrefInt(PreferKey.cBackground, background)
-                }
-                val bBackground =
-                    getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
-                ThemeStore.editTheme(this)
-                    .primaryColor(ColorUtils.withAlpha(primary, 1f))
-                    .accentColor(ColorUtils.withAlpha(accent, 1f))
-                    .backgroundColor(ColorUtils.withAlpha(background, 1f))
-                    .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
-                    .apply()
-            }
-        }
+        ThemeStore.editTheme(this)
+            .primaryColor(Color.WHITE)
+            .accentColor(Color.BLACK)
+            .backgroundColor(Color.WHITE)
+            .bottomBackground(Color.WHITE)
+            .apply()
     }
 
     @Keep

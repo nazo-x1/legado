@@ -518,83 +518,41 @@ object ReadBookConfig {
     ) {
 
         fun setCurTextColor(color: Int) {
-            when {
-                AppConfig.isEInkMode -> textColorEInk = "#${color.hexString}"
-                AppConfig.isNightTheme -> textColorNight = "#${color.hexString}"
-                else -> textColor = "#${color.hexString}"
-            }
+            textColorEInk = "#${color.hexString}"
             ChapterProvider.upStyle()
         }
 
         fun curTextColor(): Int {
-            return when {
-                AppConfig.isEInkMode -> Color.parseColor(textColorEInk)
-                AppConfig.isNightTheme -> Color.parseColor(textColorNight)
-                else -> Color.parseColor(textColor)
-            }
+            return Color.parseColor(textColorEInk)
         }
 
         fun setCurStatusIconDark(isDark: Boolean) {
-            when {
-                AppConfig.isEInkMode -> darkStatusIconEInk = isDark
-                AppConfig.isNightTheme -> darkStatusIconNight = isDark
-                else -> darkStatusIcon = isDark
-            }
+            darkStatusIconEInk = isDark
         }
 
         fun curStatusIconDark(): Boolean {
-            return when {
-                AppConfig.isEInkMode -> darkStatusIconEInk
-                AppConfig.isNightTheme -> darkStatusIconNight
-                else -> darkStatusIcon
-            }
+            return darkStatusIconEInk
         }
 
         fun setCurPageAnim(@PageAnim.Anim anim: Int) {
-            when {
-                AppConfig.isEInkMode -> pageAnimEInk = anim
-                else -> pageAnim = anim
-            }
+            pageAnimEInk = anim
         }
 
         fun curPageAnim(): Int {
-            return when {
-                AppConfig.isEInkMode -> pageAnimEInk
-                else -> pageAnim
-            }
+            return pageAnimEInk
         }
 
         fun setCurBg(bgType: Int, bg: String) {
-            when {
-                AppConfig.isEInkMode -> {
-                    bgTypeEInk = bgType
-                    bgStrEInk = bg
-                }
-                AppConfig.isNightTheme -> {
-                    bgTypeNight = bgType
-                    bgStrNight = bg
-                }
-                else -> {
-                    this.bgType = bgType
-                    bgStr = bg
-                }
-            }
+            bgTypeEInk = bgType
+            bgStrEInk = bg
         }
 
         fun curBgStr(): String {
-            return when {
-                AppConfig.isEInkMode -> bgStrEInk
-                AppConfig.isNightTheme -> bgStrNight
-                else -> bgStr
-            }
+            return bgStrEInk
         }
 
         fun curBgType(): Int {
-            return when {
-                AppConfig.isEInkMode -> bgTypeEInk
-                AppConfig.isNightTheme -> bgTypeNight
-                else -> bgType
-            }
+            return bgTypeEInk
         }
 
         fun curBgDrawable(width: Int, height: Int): Drawable {

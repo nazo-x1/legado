@@ -42,18 +42,9 @@ object BookCover {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     fun upDefaultCover() {
-        val isNightTheme = AppConfig.isNightTheme
-        drawBookName = if (isNightTheme) {
-            appCtx.getPrefBoolean(PreferKey.coverShowNameN, true)
-        } else {
-            appCtx.getPrefBoolean(PreferKey.coverShowName, true)
-        }
-        drawBookAuthor = if (isNightTheme) {
-            appCtx.getPrefBoolean(PreferKey.coverShowAuthorN, true)
-        } else {
-            appCtx.getPrefBoolean(PreferKey.coverShowAuthor, true)
-        }
-        val key = if (isNightTheme) PreferKey.defaultCoverDark else PreferKey.defaultCover
+        drawBookName = appCtx.getPrefBoolean(PreferKey.coverShowName, true)
+        drawBookAuthor = appCtx.getPrefBoolean(PreferKey.coverShowAuthor, true)
+        val key = PreferKey.defaultCover
         val path = appCtx.getPrefString(key)
         if (path.isNullOrBlank()) {
             defaultDrawable = appCtx.resources.getDrawable(R.drawable.image_cover_default, null)

@@ -122,7 +122,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     @JavascriptInterface
     fun isNightTheme(): Boolean {
-        return AppConfig.isNightTheme(this)
+        return false
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -136,7 +136,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             allowContentAccess = true
             builtInZoomControls = true
             displayZoomControls = false
-            setDarkeningAllowed(AppConfig.isNightTheme)
+            denyDarkeningAllowed()
         }
         binding.webView.addJavascriptInterface(this, "thisActivity")
         viewModel.rssSource?.let {

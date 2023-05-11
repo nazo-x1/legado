@@ -2,8 +2,8 @@ plugins {
     id "com.android.application"
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
-    id 'kotlin-kapt'
     //id "com.google.gms.google-services"
+    id 'kotlin-kapt'
 }
 apply from: 'download.gradle'
 
@@ -136,18 +136,22 @@ android {
 
 dependencies {
     compileOnly "com.android.tools.build:gradle:$agp_version"
+
     //noinspection GradleDependency,GradlePackageUpdate
     coreLibraryDesugaring('com.android.tools:desugar_jdk_libs_nio:2.0.3')
     testImplementation('junit:junit:4.13.2')
     androidTestImplementation('androidx.test:runner:1.5.2')
     androidTestImplementation('androidx.test.ext:junit:1.1.5')
     androidTestImplementation('androidx.test.espresso:espresso-core:3.5.1')
+
     //kotlin
     //noinspection GradleDependency,DifferentStdlibGradleVersion
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+
     //Kotlin反射
     //noinspection GradleDependency,DifferentStdlibGradleVersion
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
+
     //协程
     def coroutines_version = '1.7.0'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")

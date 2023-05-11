@@ -23,7 +23,6 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogFileChooserBinding
 import io.legado.app.databinding.ItemFilePickerBinding
 import io.legado.app.databinding.ItemPathPickerBinding
-import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.getPrimaryDisabledTextColor
 import io.legado.app.lib.theme.getPrimaryTextColor
@@ -202,8 +201,9 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
     }
 
     inner class FileAdapter : RecyclerAdapter<File, ItemFilePickerBinding>(requireContext()) {
-        private val primaryTextColor = context.getPrimaryTextColor(!AppConfig.isNightTheme)
-        private val disabledTextColor = context.getPrimaryDisabledTextColor(!AppConfig.isNightTheme)
+        // here!
+        private val primaryTextColor = context.getPrimaryTextColor(true)
+        private val disabledTextColor = context.getPrimaryDisabledTextColor(true)
         private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUpDir())!!
         private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFolder())!!
         private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFile())!!

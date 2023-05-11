@@ -1,6 +1,5 @@
 package io.legado.app.help.config
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import io.legado.app.BuildConfig
@@ -15,7 +14,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val isCronet = appCtx.getPrefBoolean(PreferKey.cronet)
     val useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
     var userAgent: String = getPrefUserAgent()
-    var isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
     var clickActionTL = appCtx.getPrefInt(PreferKey.clickActionTL, 2)
     var clickActionTC = appCtx.getPrefInt(PreferKey.clickActionTC, 2)
     var clickActionTR = appCtx.getPrefInt(PreferKey.clickActionTR, 1)
@@ -28,7 +26,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            PreferKey.themeMode -> isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
             PreferKey.clickActionTL -> clickActionTL =
                 appCtx.getPrefInt(PreferKey.clickActionTL, 2)
             PreferKey.clickActionTC -> clickActionTC =
@@ -55,27 +52,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
     }
 
-    fun isNightTheme(context: Context): Boolean {
-        return when (context.getPrefString(PreferKey.themeMode, "0")) {
-            "1" -> false
-            "2" -> true
-            "3" -> false
-            else -> sysConfiguration.isNightMode
-        }
-    }
-
-    var isNightTheme: Boolean
-        get() = isNightTheme(appCtx)
-        set(value) {
-            if (isNightTheme != value) {
-                if (value) {
-                    appCtx.putPrefString(PreferKey.themeMode, "2")
-                } else {
-                    appCtx.putPrefString(PreferKey.themeMode, "1")
-                }
-            }
-        }
-
     var showUnread: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.showUnread, true)
         set(value) {
@@ -89,17 +65,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
 
     var readBrightness: Int
-        get() = if (isNightTheme) {
-            appCtx.getPrefInt(PreferKey.nightBrightness, 100)
-        } else {
-            appCtx.getPrefInt(PreferKey.brightness, 100)
-        }
+        get() = appCtx.getPrefInt(PreferKey.brightness, 100)
         set(value) {
-            if (isNightTheme) {
-                appCtx.putPrefInt(PreferKey.nightBrightness, value)
-            } else {
-                appCtx.putPrefInt(PreferKey.brightness, value)
-            }
+            appCtx.putPrefInt(PreferKey.brightness, value)
         }
 
     val useDefaultCover: Boolean

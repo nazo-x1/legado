@@ -3,6 +3,7 @@ package io.legado.app.constant
 object PreferKey {
     const val language = "language"
     const val fontScale = "fontScale"
+    // here!
     const val themeMode = "themeMode"
     const val userAgent = "userAgent"
     const val showUnread = "showUnread"
@@ -95,7 +96,6 @@ object PreferKey {
     const val exportUseReplace = "exportUseReplace"
     const val useZhLayout = "useZhLayout"
     const val brightness = "brightness"
-    const val nightBrightness = "nightBrightness"
     const val expandTextMenu = "expandTextMenu"
     const val doublePageHorizontal = "doubleHorizontalPage"
     const val readUrlOpenInBrowser = "readUrlInBrowser"
@@ -107,11 +107,10 @@ object PreferKey {
     const val localBookImportSort = "localBookImportSort"
     const val customWelcome = "customWelcome"
     const val welcomeImage = "welcomeImagePath"
+    // here!
     const val welcomeImageDark = "welcomeImagePathDark"
     const val welcomeShowText = "welcomeShowText"
-    const val welcomeShowTextDark = "welcomeShowTextDark"
     const val welcomeShowIcon = "welcomeShowIcon"
-    const val welcomeShowIconDark = "welcomeShowIconDark"
     const val pageTouchSlop = "pageTouchSlop"
     const val showAddToShelfAlert = "showAddToShelfAlert"
     const val asyncLoadImage = "asyncLoadImage"
