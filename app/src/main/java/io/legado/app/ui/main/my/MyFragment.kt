@@ -12,9 +12,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.FragmentMyConfigBinding
-import io.legado.app.help.config.ThemeConfig
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.lib.prefs.NameListPreference
 import io.legado.app.lib.prefs.PreferenceCategory
 import io.legado.app.lib.prefs.SwitchPreference
 import io.legado.app.lib.prefs.fragment.PreferenceFragment
@@ -32,7 +30,15 @@ import io.legado.app.ui.dict.rule.DictRuleActivity
 import io.legado.app.ui.file.FileManageActivity
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.LogUtils
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.observeEventSticky
+import io.legado.app.utils.openUrl
+import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class MyFragment : BaseFragment(R.layout.fragment_my_config) {
@@ -94,12 +100,6 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                     } else {
                         getString(R.string.web_service_desc)
                     }
-                }
-            }
-            findPreference<NameListPreference>(PreferKey.themeMode)?.let {
-                it.setOnPreferenceChangeListener { _, _ ->
-                    view?.post { ThemeConfig.applyDayNight(requireContext()) }
-                    true
                 }
             }
         }

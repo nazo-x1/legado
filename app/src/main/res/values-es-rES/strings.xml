@@ -465,9 +465,6 @@
     <string name="share_selected_source">Compartir fuentes seleccionadas</string>
     <string name="scan_qr_code">Escanear código QR</string>
     <string name="click_on_selected_show_menu">Toque para mostrar el menú cuando esté seleccionado</string>
-    <string name="theme">Tema</string>
-    <string name="theme_mode">Tipo de tema</string>
-    <string name="theme_mode_desc">Seleccione el tema que prefiera</string>
     <string name="join_qq_group">Únase al grupo QQ</string>
     <string name="bg_image_per">Para establecer la imagen de fondo requiere del permiso de almacenamiento</string>
     <string name="input_book_source_url">Ingrese la dirección de origen del libro</string>

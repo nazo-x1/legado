@@ -3,6 +3,8 @@
 
     <attr name="radius" format="dimension" />
     <attr name="isBottomBackground" format="boolean" />
+
+    <!-- // here!  -->
     <attr name="themeMode" format="enum">
         <enum name="dark" value="1" />
         <enum name="light" value="2" />

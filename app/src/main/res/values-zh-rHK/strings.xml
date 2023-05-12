@@ -460,9 +460,6 @@
     <string name="import_by_qr_code">二維碼導入</string>
     <string name="scan_qr_code">掃描二維碼</string>
     <string name="click_on_selected_show_menu">選中時點擊可彈出菜單</string>
-    <string name="theme">主題</string>
-    <string name="theme_mode">主題模式</string>
-    <string name="theme_mode_desc">選擇主題模式</string>
     <string name="join_qq_group">加入QQ羣</string>
     <string name="bg_image_per">獲取背景圖片需存儲權限</string>
     <string name="input_book_source_url">輸入書源網址</string>

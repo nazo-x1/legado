@@ -469,9 +469,6 @@
     <string name="share_selected_source">Share selected sources</string>
     <string name="scan_qr_code">Scan QR code</string>
     <string name="click_on_selected_show_menu">Tap to display Menu when selected </string>
-    <string name="theme">Theme</string>
-    <string name="theme_mode">Theme mode</string>
-    <string name="theme_mode_desc">Select a theme you want</string>
     <string name="join_qq_group">Join QQ group</string>
     <string name="bg_image_per">Set the background image requires storage permission</string>
     <string name="input_book_source_url">Input book source address</string>

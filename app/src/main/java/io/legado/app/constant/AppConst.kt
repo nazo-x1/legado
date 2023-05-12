@@ -14,6 +14,7 @@ object AppConst {
 
     const val APP_TAG = "Legado"
 
+    // here!
     val isPlayChannel = appCtx.channel == "google"
 
     const val channelIdDownload = "channel_download"

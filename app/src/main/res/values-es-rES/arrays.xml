@@ -32,13 +32,6 @@
 		<item>@string/jf_convert_f</item>
 	</string-array>
 
-	<string-array name="theme_mode">
-		<item>Adaptar do sistema</item>
-		<item>Tema Claro</item>
-		<item>Tema Oscuro</item>
-		<item>Tema E-Ink</item>
-	</string-array>
-
 	<string-array name="NavBarColors">
 		<item>Autom.</item>
 		<item>Oscuro</item>

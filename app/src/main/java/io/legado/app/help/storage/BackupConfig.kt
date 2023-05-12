@@ -22,7 +22,6 @@ object BackupConfig {
     //配置忽略key
     val ignoreKeys = arrayOf(
         "readConfig",
-        PreferKey.themeMode,
         PreferKey.bookshelfLayout,
         PreferKey.showRss,
         PreferKey.threadCount,
@@ -32,7 +31,6 @@ object BackupConfig {
     val ignoreTitle
         get() = arrayOf(
             appCtx.getString(R.string.read_config),
-            appCtx.getString(R.string.theme_mode),
             appCtx.getString(R.string.bookshelf_layout),
             appCtx.getString(R.string.show_rss),
             appCtx.getString(R.string.thread_count)
@@ -75,7 +73,6 @@ object BackupConfig {
         return when {
             ignorePrefKeys.contains(key) -> false
             readPrefKeys.contains(key) && ignoreReadConfig -> false
-            PreferKey.themeMode == key && ignoreThemeMode -> false
             PreferKey.bookshelfLayout == key && ignoreBookshelfLayout -> false
             PreferKey.showRss == key && ignoreShowRss -> false
             PreferKey.threadCount == key && ignoreThreadCount -> false
@@ -85,8 +82,6 @@ object BackupConfig {
 
     val ignoreReadConfig: Boolean
         get() = ignoreConfig["readConfig"] == true
-    private val ignoreThemeMode: Boolean
-        get() = ignoreConfig[PreferKey.themeMode] == true
     private val ignoreBookshelfLayout: Boolean
         get() = ignoreConfig[PreferKey.bookshelfLayout] == true
     private val ignoreShowRss: Boolean

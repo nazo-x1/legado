@@ -13,13 +13,6 @@
         <item>文件夾</item>
     </string-array>
 
-    <string-array name="theme_mode">
-        <item>跟隨系統</item>
-        <item>亮色主題</item>
-        <item>暗色主題</item>
-        <item>E-Ink(墨水螢幕)</item>
-    </string-array>
-
     <string-array name="NavBarColors">
         <item>自動</item>
         <item>黑色</item>

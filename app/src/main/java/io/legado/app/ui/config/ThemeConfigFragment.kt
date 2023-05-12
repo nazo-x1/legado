@@ -5,12 +5,8 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
-import androidx.core.view.MenuProvider
 import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.base.AppContextWrapper
@@ -36,20 +32,12 @@ import java.io.FileOutputStream
 
 @Suppress("SameParameterValue")
 class ThemeConfigFragment : PreferenceFragment(),
-    SharedPreferences.OnSharedPreferenceChangeListener,
-    MenuProvider {
+    SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val requestCodeBgLight = 121
-    private val requestCodeBgDark = 122
     private val selectImage = registerForActivityResult(SelectImageContract()) {
         it.uri?.let { uri ->
-            when (it.requestCode) {
-                requestCodeBgLight -> setBgFromUri(uri, PreferKey.bgImage) {
-                    upTheme(false)
-                }
-                requestCodeBgDark -> setBgFromUri(uri, PreferKey.bgImageN) {
-                    upTheme(true)
-                }
+            setBgFromUri(uri, PreferKey.bgImage) {
+                upTheme()
             }
         }
     }
@@ -58,9 +46,6 @@ class ThemeConfigFragment : PreferenceFragment(),
         addPreferencesFromResource(R.xml.pref_config_theme)
         if (Build.VERSION.SDK_INT < 26) {
             preferenceScreen.removePreferenceRecursively(PreferKey.launcherIcon)
-        }
-        if (!AppConst.isPlayChannel) {
-            preferenceScreen.removePreferenceRecursively("welcomeStyle")
         }
         upPreferenceSummary(PreferKey.bgImage, getPrefString(PreferKey.bgImage))
         upPreferenceSummary(PreferKey.bgImageN, getPrefString(PreferKey.bgImageN))
@@ -92,7 +77,6 @@ class ThemeConfigFragment : PreferenceFragment(),
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.theme_setting)
         listView.setEdgeEffectColor(primaryColor)
-        activity?.addMenuProvider(this, viewLifecycleOwner)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,16 +89,6 @@ class ThemeConfigFragment : PreferenceFragment(),
         preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.theme_config, menu)
-        menu.applyTint(requireContext())
-    }
-
-    // here!
-    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        return false
-    }
-
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         sharedPreferences ?: return
         when (key) {
@@ -125,20 +99,9 @@ class ThemeConfigFragment : PreferenceFragment(),
             PreferKey.cAccent,
             PreferKey.cBackground,
             PreferKey.cBBackground -> {
-                upTheme(false)
-            }
-            PreferKey.cNPrimary,
-            PreferKey.cNAccent,
-            PreferKey.cNBackground,
-            PreferKey.cNBBackground -> {
-                upTheme(true)
-            }
-            PreferKey.bgImage,
-            PreferKey.bgImageN -> {
-                upPreferenceSummary(key, getPrefString(key))
+                upTheme()
             }
         }
-
     }
 
     @SuppressLint("PrivateResource")
@@ -170,8 +133,8 @@ class ThemeConfigFragment : PreferenceFragment(),
                     putPrefInt(PreferKey.fontScale, it)
                     recreateActivities()
                 }
-            PreferKey.bgImage -> selectBgAction(false)
-            PreferKey.bgImageN -> selectBgAction(true)
+            PreferKey.bgImage -> selectBgAction()
+            PreferKey.bgImageN -> selectBgAction()
             "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
             "saveDayTheme",
             "saveNightTheme" -> alertSaveTheme(key)
@@ -206,9 +169,9 @@ class ThemeConfigFragment : PreferenceFragment(),
         }
     }
 
-    private fun selectBgAction(isNight: Boolean) {
-        val bgKey = if (isNight) PreferKey.bgImageN else PreferKey.bgImage
-        val blurringKey = if (isNight) PreferKey.bgImageNBlurring else PreferKey.bgImageBlurring
+    private fun selectBgAction() {
+        val bgKey = PreferKey.bgImage
+        val blurringKey = PreferKey.bgImageBlurring
         val actions = arrayListOf(
             getString(R.string.background_image_blurring),
             getString(R.string.select_image)
@@ -219,18 +182,14 @@ class ThemeConfigFragment : PreferenceFragment(),
         context?.selector(items = actions) { _, i ->
             when (i) {
                 0 -> alertImageBlurring(blurringKey) {
-                    upTheme(isNight)
+                    upTheme()
                 }
                 1 -> {
-                    if (isNight) {
-                        selectImage.launch(requestCodeBgDark)
-                    } else {
-                        selectImage.launch(requestCodeBgLight)
-                    }
+                    selectImage.launch()
                 }
                 2 -> {
                     removePref(bgKey)
-                    upTheme(isNight)
+                    upTheme()
                 }
             }
         }
@@ -264,13 +223,10 @@ class ThemeConfigFragment : PreferenceFragment(),
         }
     }
 
-    // here!
-    private fun upTheme(isNightTheme: Boolean) {
-        if (!isNightTheme) {
-            listView.post {
-                ThemeConfig.applyTheme(requireContext())
-                recreateActivities()
-            }
+    private fun upTheme() {
+        listView.post {
+            ThemeConfig.applyTheme(requireContext())
+            recreateActivities()
         }
     }
 

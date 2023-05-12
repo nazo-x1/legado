@@ -9,13 +9,23 @@ import androidx.appcompat.app.AppCompatDelegate
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.constant.Theme
 import io.legado.app.help.DefaultData
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.model.BookCover
-import io.legado.app.utils.*
+import io.legado.app.utils.BitmapUtils
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.hexString
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.stackBlur
 import splitties.init.appCtx
-
 import java.io.File
 
 @Keep
@@ -28,6 +38,7 @@ object ThemeConfig {
         ArrayList(cList)
     }
 
+    // here!
     fun applyDayNight(context: Context) {
         applyTheme(context)
         initNightMode()
@@ -40,19 +51,11 @@ object ThemeConfig {
         AppCompatDelegate.setDefaultNightMode(targetMode)
     }
 
-    // here!
     fun getBgImage(context: Context, metrics: DisplayMetrics): Bitmap? {
-        val bgCfg = when (Theme.EInk) {
-            Theme.Light -> Pair(
-                context.getPrefString(PreferKey.bgImage),
-                context.getPrefInt(PreferKey.bgImageBlurring, 0)
-            )
-            Theme.Dark -> Pair(
-                context.getPrefString(PreferKey.bgImageN),
-                context.getPrefInt(PreferKey.bgImageNBlurring, 0)
-            )
-            else -> null
-        } ?: return null
+        val bgCfg = Pair(
+            context.getPrefString(PreferKey.bgImage),
+            context.getPrefInt(PreferKey.bgImageBlurring, 0)
+        )
         if (bgCfg.first.isNullOrBlank()) return null
         val bgImage = BitmapUtils
             .decodeBitmap(bgCfg.first!!, metrics.widthPixels, metrics.heightPixels)

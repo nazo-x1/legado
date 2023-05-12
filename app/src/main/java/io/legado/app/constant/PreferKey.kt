@@ -3,8 +3,6 @@ package io.legado.app.constant
 object PreferKey {
     const val language = "language"
     const val fontScale = "fontScale"
-    // here!
-    const val themeMode = "themeMode"
     const val userAgent = "userAgent"
     const val showUnread = "showUnread"
     const val bookGroupStyle = "bookGroupStyle"
@@ -140,7 +138,6 @@ object PreferKey {
     const val cNBackground = "colorBackgroundNight"
     const val cNBBackground = "colorBottomBackgroundNight"
     const val bgImageN = "backgroundImageNight"
-    const val bgImageNBlurring = "backgroundImageNightBlurring"
     const val showReadTitleAddition = "showReadTitleAddition"
     const val readBarStyleFollowPage = "readBarStyleFollowPage"
     const val contentSelectSpeakMod = "contentReadAloudMod"

@@ -18,13 +18,6 @@
         <item>.xml</item>
     </string-array>
 
-    <string-array name="theme_mode">
-        <item>跟随系统</item>
-        <item>亮色主题</item>
-        <item>暗色主题</item>
-        <item>E-Ink(墨水屏)</item>
-    </string-array>
-
     <string-array name="double_page_title">
         <item>全局单页</item>
         <item>全局双页</item>
