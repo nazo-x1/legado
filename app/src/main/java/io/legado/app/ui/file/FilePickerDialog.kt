@@ -201,7 +201,6 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
     }
 
     inner class FileAdapter : RecyclerAdapter<File, ItemFilePickerBinding>(requireContext()) {
-        // here!
         private val primaryTextColor = context.getPrimaryTextColor(true)
         private val disabledTextColor = context.getPrimaryDisabledTextColor(true)
         private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUpDir())!!

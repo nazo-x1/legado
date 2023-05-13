@@ -7,7 +7,6 @@ import android.graphics.PorterDuff
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.animation.Animation
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.legado.app.R
@@ -34,8 +33,6 @@ class SearchMenu @JvmOverloads constructor(
     private val callBack: CallBack get() = activity as CallBack
     private val binding = ViewSearchMenuBinding.inflate(LayoutInflater.from(context), this, true)
 
-    private val menuBottomIn: Animation = loadAnimation(context, R.anim.anim_readbook_bottom_in)
-    private val menuBottomOut: Animation = loadAnimation(context, R.anim.anim_readbook_bottom_out)
     private val bgColor: Int = context.bottomBackground
     private val textColor: Int = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
     private val bottomBackgroundList: ColorStateList =
@@ -54,7 +51,6 @@ class SearchMenu @JvmOverloads constructor(
         get() = searchResultList.getOrNull(lastSearchResultIndex)
 
     init {
-        initAnimation()
         initView()
         bindEvent()
         updateSearchInfo()
@@ -85,21 +81,62 @@ class SearchMenu @JvmOverloads constructor(
         tvCurrentSearchInfo.setTextColor(textColor)
     }
 
+    private fun menuBottomInStart() {
+        callBack.upSystemUiVisibility()
+        binding.fabLeft.visible(hasSearchResult)
+        binding.fabRight.visible(hasSearchResult)
+    }
+
+    private fun menuBottomInEnd() {
+        val navigationBarHeight = if (ReadBookConfig.hideNavigationBar) {
+            activity?.navigationBarHeight ?: 0
+        } else {
+            0
+        }
+        binding.run {
+            vwMenuBg.setOnClickListener { runMenuOut() }
+            root.padding = 0
+            when (activity?.navigationBarGravity) {
+                Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
+                Gravity.START -> root.leftPadding = navigationBarHeight
+                Gravity.END -> root.rightPadding = navigationBarHeight
+            }
+        }
+        callBack.upSystemUiVisibility()
+    }
 
     fun runMenuIn() {
         this.visible()
         binding.llSearchBaseInfo.visible()
         binding.llBottomBg.visible()
         binding.vwMenuBg.visible()
-        binding.llSearchBaseInfo.startAnimation(menuBottomIn)
-        binding.llBottomBg.startAnimation(menuBottomIn)
+        menuBottomInStart()
+        binding.llSearchBaseInfo.visible()
+        binding.llBottomBg.visible()
+        menuBottomInEnd()
     }
 
-    fun runMenuOut(onMenuOutEnd: (() -> Unit)? = null) {
+    private fun menuBottomOutStart() {
+        binding.vwMenuBg.setOnClickListener(null)
+    }
+
+    private fun menuBottomOutEnd() {
+        binding.llSearchBaseInfo.invisible()
+        binding.llBottomBg.invisible()
+        binding.vwMenuBg.invisible()
+        binding.vwMenuBg.setOnClickListener { runMenuOut() }
+
+        onMenuOutEnd?.invoke()
+        callBack.upSystemUiVisibility()
+    }
+
+    private fun runMenuOut(onMenuOutEnd: (() -> Unit)? = null) {
         this.onMenuOutEnd = onMenuOutEnd
         if (this.isVisible) {
-            binding.llSearchBaseInfo.startAnimation(menuBottomOut)
-            binding.llBottomBg.startAnimation(menuBottomOut)
+            menuBottomOutStart()
+            binding.llSearchBaseInfo.visible(false)
+            binding.llBottomBg.visible(false)
+            menuBottomOutEnd()
         }
     }
 
@@ -174,57 +211,6 @@ class SearchMenu @JvmOverloads constructor(
                 currentSearchResultIndex
             )
         }
-    }
-
-    private fun initAnimation() {
-        //显示菜单
-        menuBottomIn.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                callBack.upSystemUiVisibility()
-                binding.fabLeft.visible(hasSearchResult)
-                binding.fabRight.visible(hasSearchResult)
-            }
-
-            @SuppressLint("RtlHardcoded")
-            override fun onAnimationEnd(animation: Animation) {
-                val navigationBarHeight = if (ReadBookConfig.hideNavigationBar) {
-                    activity?.navigationBarHeight ?: 0
-                } else {
-                    0
-                }
-                binding.run {
-                    vwMenuBg.setOnClickListener { runMenuOut() }
-                    root.padding = 0
-                    when (activity?.navigationBarGravity) {
-                        Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
-                        Gravity.LEFT -> root.leftPadding = navigationBarHeight
-                        Gravity.RIGHT -> root.rightPadding = navigationBarHeight
-                    }
-                }
-                callBack.upSystemUiVisibility()
-            }
-
-            override fun onAnimationRepeat(animation: Animation) = Unit
-        })
-
-        //隐藏菜单
-        menuBottomOut.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                binding.vwMenuBg.setOnClickListener(null)
-            }
-
-            override fun onAnimationEnd(animation: Animation) {
-                binding.llSearchBaseInfo.invisible()
-                binding.llBottomBg.invisible()
-                binding.vwMenuBg.invisible()
-                binding.vwMenuBg.setOnClickListener { runMenuOut() }
-
-                onMenuOutEnd?.invoke()
-                callBack.upSystemUiVisibility()
-            }
-
-            override fun onAnimationRepeat(animation: Animation) = Unit
-        })
     }
 
     interface CallBack {
