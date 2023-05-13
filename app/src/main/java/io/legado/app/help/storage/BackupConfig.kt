@@ -39,7 +39,6 @@ object BackupConfig {
     //自动忽略keys
     private val ignorePrefKeys = arrayOf(
         PreferKey.defaultCover,
-        PreferKey.defaultCoverDark,
         PreferKey.backupPath,
         PreferKey.defaultBookTreeUri,
         PreferKey.webDavDeviceName,

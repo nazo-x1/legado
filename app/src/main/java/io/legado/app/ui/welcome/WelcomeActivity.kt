@@ -70,6 +70,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
 
 }
 
+// here!
 class Launcher1 : WelcomeActivity()
 class Launcher2 : WelcomeActivity()
 class Launcher3 : WelcomeActivity()

@@ -19,21 +19,15 @@ import java.io.FileOutputStream
 class WelcomeConfigFragment : PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val requestWelcomeImage = 221
-    private val requestWelcomeImageDark = 222
     private val selectImage = registerForActivityResult(SelectImageContract()) {
         it.uri?.let { uri ->
-            when (it.requestCode) {
-                requestWelcomeImage -> setCoverFromUri(PreferKey.welcomeImage, uri)
-                requestWelcomeImageDark -> setCoverFromUri(PreferKey.welcomeImageDark, uri)
-            }
+            setCoverFromUri(uri)
         }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_welcome)
         upPreferenceSummary(PreferKey.welcomeImage, getPrefString(PreferKey.welcomeImage))
-        upPreferenceSummary(PreferKey.welcomeImageDark, getPrefString(PreferKey.welcomeImageDark))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,8 +49,7 @@ class WelcomeConfigFragment : PreferenceFragment(),
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         sharedPreferences ?: return
         when (key) {
-            PreferKey.welcomeImage,
-            PreferKey.welcomeImageDark -> {
+            PreferKey.welcomeImage -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
         }
@@ -67,7 +60,7 @@ class WelcomeConfigFragment : PreferenceFragment(),
         when (preference.key) {
             PreferKey.welcomeImage ->
                 if (getPrefString(preference.key).isNullOrEmpty()) {
-                    selectImage.launch(requestWelcomeImage)
+                    selectImage.launch()
                 } else {
                     context?.selector(
                         items = arrayListOf(
@@ -79,25 +72,7 @@ class WelcomeConfigFragment : PreferenceFragment(),
                             removePref(preference.key)
                             BookCover.upDefaultCover()
                         } else {
-                            selectImage.launch(requestWelcomeImage)
-                        }
-                    }
-                }
-            PreferKey.welcomeImageDark ->
-                if (getPrefString(preference.key).isNullOrEmpty()) {
-                    selectImage.launch(requestWelcomeImageDark)
-                } else {
-                    context?.selector(
-                        items = arrayListOf(
-                            getString(R.string.delete),
-                            getString(R.string.select_image)
-                        )
-                    ) { _, i ->
-                        if (i == 0) {
-                            removePref(preference.key)
-                            BookCover.upDefaultCover()
-                        } else {
-                            selectImage.launch(requestWelcomeImageDark)
+                            selectImage.launch()
                         }
                     }
                 }
@@ -108,8 +83,7 @@ class WelcomeConfigFragment : PreferenceFragment(),
     private fun upPreferenceSummary(preferenceKey: String, value: String?) {
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
-            PreferKey.welcomeImage,
-            PreferKey.welcomeImageDark -> preference.summary = if (value.isNullOrBlank()) {
+            PreferKey.welcomeImage -> preference.summary = if (value.isNullOrBlank()) {
                 getString(R.string.select_image)
             } else {
                 value
@@ -118,7 +92,7 @@ class WelcomeConfigFragment : PreferenceFragment(),
         }
     }
 
-    private fun setCoverFromUri(preferenceKey: String, uri: Uri) {
+    private fun setCoverFromUri(uri: Uri) {
         readUri(uri) { fileDoc, inputStream ->
             kotlin.runCatching {
                 var file = requireContext().externalFiles
@@ -130,7 +104,7 @@ class WelcomeConfigFragment : PreferenceFragment(),
                 FileOutputStream(file).use {
                     inputStream.copyTo(it)
                 }
-                putPrefString(preferenceKey, file.absolutePath)
+                putPrefString(PreferKey.welcomeImage, file.absolutePath)
             }.onFailure {
                 appCtx.toastOnUi(it.localizedMessage)
             }

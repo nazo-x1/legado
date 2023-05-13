@@ -38,15 +38,14 @@ object ThemeConfig {
         ArrayList(cList)
     }
 
-    // here!
-    fun applyDayNight(context: Context) {
+    fun applyDayTheme(context: Context) {
         applyTheme(context)
-        initNightMode()
+        disableNightMode()
         BookCover.upDefaultCover()
         postEvent(EventBus.RECREATE, "")
     }
 
-    private fun initNightMode() {
+    private fun disableNightMode() {
         val targetMode = AppCompatDelegate.MODE_NIGHT_NO
         AppCompatDelegate.setDefaultNightMode(targetMode)
     }
@@ -120,18 +119,11 @@ object ThemeConfig {
         val accent = Color.parseColor(config.accentColor)
         val background = Color.parseColor(config.backgroundColor)
         val bBackground = Color.parseColor(config.bottomBackground)
-        if (config.isNightTheme) {
-            context.putPrefInt(PreferKey.cNPrimary, primary)
-            context.putPrefInt(PreferKey.cNAccent, accent)
-            context.putPrefInt(PreferKey.cNBackground, background)
-            context.putPrefInt(PreferKey.cNBBackground, bBackground)
-        } else {
-            context.putPrefInt(PreferKey.cPrimary, primary)
-            context.putPrefInt(PreferKey.cAccent, accent)
-            context.putPrefInt(PreferKey.cBackground, background)
-            context.putPrefInt(PreferKey.cBBackground, bBackground)
-        }
-        applyDayNight(context)
+        context.putPrefInt(PreferKey.cPrimary, primary)
+        context.putPrefInt(PreferKey.cAccent, accent)
+        context.putPrefInt(PreferKey.cBackground, background)
+        context.putPrefInt(PreferKey.cBBackground, bBackground)
+        applyDayTheme(context)
     }
 
     fun saveDayTheme(context: Context, name: String) {
@@ -145,33 +137,6 @@ object ThemeConfig {
             context.getPrefInt(PreferKey.cBBackground, context.getCompatColor(R.color.md_grey_200))
         val config = Config(
             themeName = name,
-            isNightTheme = false,
-            primaryColor = "#${primary.hexString}",
-            accentColor = "#${accent.hexString}",
-            backgroundColor = "#${background.hexString}",
-            bottomBackground = "#${bBackground.hexString}"
-        )
-        addConfig(config)
-    }
-
-    fun saveNightTheme(context: Context, name: String) {
-        val primary =
-            context.getPrefInt(
-                PreferKey.cNPrimary,
-                context.getCompatColor(R.color.md_blue_grey_600)
-            )
-        val accent =
-            context.getPrefInt(
-                PreferKey.cNAccent,
-                context.getCompatColor(R.color.md_deep_orange_800)
-            )
-        val background =
-            context.getPrefInt(PreferKey.cNBackground, context.getCompatColor(R.color.md_grey_900))
-        val bBackground =
-            context.getPrefInt(PreferKey.cNBBackground, context.getCompatColor(R.color.md_grey_850))
-        val config = Config(
-            themeName = name,
-            isNightTheme = true,
             primaryColor = "#${primary.hexString}",
             accentColor = "#${accent.hexString}",
             backgroundColor = "#${background.hexString}",
@@ -195,7 +160,6 @@ object ThemeConfig {
     @Keep
     data class Config(
         var themeName: String,
-        var isNightTheme: Boolean,
         var primaryColor: String,
         var accentColor: String,
         var backgroundColor: String,
@@ -210,7 +174,6 @@ object ThemeConfig {
             other ?: return false
             if (other is Config) {
                 return other.themeName == themeName
-                        && other.isNightTheme == isNightTheme
                         && other.primaryColor == primaryColor
                         && other.accentColor == accentColor
                         && other.backgroundColor == backgroundColor

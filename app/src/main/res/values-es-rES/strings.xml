@@ -749,8 +749,6 @@
     <string name="select_restore_file">Seleccione el archivo de restauración</string>
     <string name="day_background_too_dark">¡El fondo diurno no puede ser demasiado oscuro!</string>
     <string name="day_bottom_bar_too_dark">¡El fondo inferior diurno no puede ser demasiado oscuro!</string>
-    <string name="night_background_too_light">¡El fondo nocturno no puede ser demasiado brillante!</string>
-    <string name="night_bottom_bar_too_light">¡El fondo inferior nocturno no puede ser demasiado brillante!</string>
     <string name="accent_background_diff">Debe haber un contraste entre el color de resalte y el de fondo</string>
     <string name="accent_text_diff">Debe haber un contraste entre el resalte y el color del texto</string>
     <string name="wrong_format">Formato incorrecto</string>

@@ -751,8 +751,6 @@
     <string name="select_restore_file">选择恢复文件</string>
     <string name="day_background_too_dark">白天背景不能太暗</string>
     <string name="day_bottom_bar_too_dark">白天底栏不能太暗</string>
-    <string name="night_background_too_light">夜间背景不能太亮</string>
-    <string name="night_bottom_bar_too_light">夜间底栏不能太亮</string>
     <string name="accent_background_diff">强调色不能和背景颜色相似</string>
     <string name="accent_text_diff">强调色不能和文字颜色相似</string>
     <string name="wrong_format">格式不对</string>

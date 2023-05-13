@@ -48,23 +48,12 @@ class ThemeConfigFragment : PreferenceFragment(),
             preferenceScreen.removePreferenceRecursively(PreferKey.launcherIcon)
         }
         upPreferenceSummary(PreferKey.bgImage, getPrefString(PreferKey.bgImage))
-        upPreferenceSummary(PreferKey.bgImageN, getPrefString(PreferKey.bgImageN))
         upPreferenceSummary(PreferKey.barElevation, AppConfig.elevation.toString())
         upPreferenceSummary(PreferKey.fontScale)
         findPreference<ColorPreference>(PreferKey.cBackground)?.let {
             it.onSaveColor = { color ->
                 if (!ColorUtils.isColorLight(color)) {
                     toastOnUi(R.string.day_background_too_dark)
-                    true
-                } else {
-                    false
-                }
-            }
-        }
-        findPreference<ColorPreference>(PreferKey.cNBackground)?.let {
-            it.onSaveColor = { color ->
-                if (ColorUtils.isColorLight(color)) {
-                    toastOnUi(R.string.night_background_too_light)
                     true
                 } else {
                     false
@@ -106,7 +95,7 @@ class ThemeConfigFragment : PreferenceFragment(),
 
     @SuppressLint("PrivateResource")
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
-        when (val key = preference.key) {
+        when (preference.key) {
             PreferKey.barElevation -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.bar_elevation))
                 .setMaxValue(32)
@@ -134,10 +123,8 @@ class ThemeConfigFragment : PreferenceFragment(),
                     recreateActivities()
                 }
             PreferKey.bgImage -> selectBgAction()
-            PreferKey.bgImageN -> selectBgAction()
             "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
-            "saveDayTheme",
-            "saveNightTheme" -> alertSaveTheme(key)
+            "saveDayTheme" -> alertSaveTheme()
             "coverConfig" -> (activity as? ConfigActivity)
                 ?.replaceFragment<CoverConfigFragment>(ConfigTag.COVER_CONFIG)
             "welcomeStyle" -> (activity as? ConfigActivity)
@@ -147,22 +134,15 @@ class ThemeConfigFragment : PreferenceFragment(),
     }
 
     @SuppressLint("InflateParams")
-    private fun alertSaveTheme(key: String) {
+    private fun alertSaveTheme() {
         alert(R.string.theme_name) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "name"
             }
             customView { alertBinding.root }
             okButton {
-                alertBinding.editView.text?.toString()?.let { themeName ->
-                    when (key) {
-                        "saveDayTheme" -> {
-                            ThemeConfig.saveDayTheme(requireContext(), themeName)
-                        }
-                        "saveNightTheme" -> {
-                            ThemeConfig.saveNightTheme(requireContext(), themeName)
-                        }
-                    }
+                alertBinding.editView.text?.toString()?.let {
+                    ThemeConfig.saveDayTheme(requireContext(), "saveDayTheme")
                 }
             }
             noButton()
@@ -243,8 +223,7 @@ class ThemeConfigFragment : PreferenceFragment(),
                 val fontScale = AppContextWrapper.getFontScale(requireContext())
                 preference.summary = getString(R.string.font_scale_summary, fontScale)
             }
-            PreferKey.bgImage,
-            PreferKey.bgImageN -> preference.summary = if (value.isNullOrBlank()) {
+            PreferKey.bgImage -> preference.summary = if (value.isNullOrBlank()) {
                 getString(R.string.select_image)
             } else {
                 value

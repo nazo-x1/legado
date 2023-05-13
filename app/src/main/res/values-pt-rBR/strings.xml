@@ -750,8 +750,6 @@
     <string name="select_restore_file">Selecione o arquivo de restauração</string>
     <string name="day_background_too_dark">O fundo diurno não pode ser muito escuro!</string>
     <string name="day_bottom_bar_too_dark">A parte inferior diurno não pode ser muito escuro!</string>
-    <string name="night_background_too_light">O fundo noturno não pode ser muito brilhante!</string>
-    <string name="night_bottom_bar_too_light">A parte inferior noturno não pode ser muito brilhante!</string>
     <string name="accent_background_diff">Tem que haver diferença entre destaque e cor de fundo</string>
     <string name="accent_text_diff">Tem que haver diferença entre destaque e cor de texto</string>
     <string name="wrong_format">Formato incorreto</string>

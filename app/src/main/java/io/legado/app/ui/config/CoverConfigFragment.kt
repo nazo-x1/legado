@@ -20,25 +20,17 @@ import java.io.FileOutputStream
 class CoverConfigFragment : PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val requestCodeCover = 111
-    private val requestCodeCoverDark = 112
     private val selectImage = registerForActivityResult(SelectImageContract()) {
         it.uri?.let { uri ->
-            when (it.requestCode) {
-                requestCodeCover -> setCoverFromUri(PreferKey.defaultCover, uri)
-                requestCodeCoverDark -> setCoverFromUri(PreferKey.defaultCoverDark, uri)
-            }
+            setCoverFromUri(uri)
         }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_cover)
         upPreferenceSummary(PreferKey.defaultCover, getPrefString(PreferKey.defaultCover))
-        upPreferenceSummary(PreferKey.defaultCoverDark, getPrefString(PreferKey.defaultCoverDark))
         findPreference<SwitchPreference>(PreferKey.coverShowAuthor)
             ?.isEnabled = getPrefBoolean(PreferKey.coverShowName)
-        findPreference<SwitchPreference>(PreferKey.coverShowAuthorN)
-            ?.isEnabled = getPrefBoolean(PreferKey.coverShowNameN)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,8 +52,7 @@ class CoverConfigFragment : PreferenceFragment(),
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         sharedPreferences ?: return
         when (key) {
-            PreferKey.defaultCover,
-            PreferKey.defaultCoverDark -> {
+            PreferKey.defaultCover -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
             PreferKey.coverShowName -> {
@@ -69,13 +60,7 @@ class CoverConfigFragment : PreferenceFragment(),
                     ?.isEnabled = getPrefBoolean(key)
                 BookCover.upDefaultCover()
             }
-            PreferKey.coverShowNameN -> {
-                findPreference<SwitchPreference>(PreferKey.coverShowAuthorN)
-                    ?.isEnabled = getPrefBoolean(key)
-                BookCover.upDefaultCover()
-            }
-            PreferKey.coverShowAuthor,
-            PreferKey.coverShowAuthorN -> {
+            PreferKey.coverShowAuthor -> {
                 BookCover.upDefaultCover()
             }
         }
@@ -87,7 +72,7 @@ class CoverConfigFragment : PreferenceFragment(),
             "coverRule" -> showDialogFragment(CoverRuleConfigDialog())
             PreferKey.defaultCover ->
                 if (getPrefString(preference.key).isNullOrEmpty()) {
-                    selectImage.launch(requestCodeCover)
+                    selectImage.launch()
                 } else {
                     context?.selector(
                         items = arrayListOf(
@@ -99,25 +84,7 @@ class CoverConfigFragment : PreferenceFragment(),
                             removePref(preference.key)
                             BookCover.upDefaultCover()
                         } else {
-                            selectImage.launch(requestCodeCover)
-                        }
-                    }
-                }
-            PreferKey.defaultCoverDark ->
-                if (getPrefString(preference.key).isNullOrEmpty()) {
-                    selectImage.launch(requestCodeCoverDark)
-                } else {
-                    context?.selector(
-                        items = arrayListOf(
-                            getString(R.string.delete),
-                            getString(R.string.select_image)
-                        )
-                    ) { _, i ->
-                        if (i == 0) {
-                            removePref(preference.key)
-                            BookCover.upDefaultCover()
-                        } else {
-                            selectImage.launch(requestCodeCoverDark)
+                            selectImage.launch()
                         }
                     }
                 }
@@ -128,8 +95,7 @@ class CoverConfigFragment : PreferenceFragment(),
     private fun upPreferenceSummary(preferenceKey: String, value: String?) {
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
-            PreferKey.defaultCover,
-            PreferKey.defaultCoverDark -> preference.summary = if (value.isNullOrBlank()) {
+            PreferKey.defaultCover -> preference.summary = if (value.isNullOrBlank()) {
                 getString(R.string.select_image)
             } else {
                 value
@@ -138,7 +104,7 @@ class CoverConfigFragment : PreferenceFragment(),
         }
     }
 
-    private fun setCoverFromUri(preferenceKey: String, uri: Uri) {
+    private fun setCoverFromUri(uri: Uri) {
         readUri(uri) { fileDoc, inputStream ->
             kotlin.runCatching {
                 var file = requireContext().externalFiles
@@ -150,7 +116,7 @@ class CoverConfigFragment : PreferenceFragment(),
                 FileOutputStream(file).use {
                     inputStream.copyTo(it)
                 }
-                putPrefString(preferenceKey, file.absolutePath)
+                putPrefString(PreferKey.defaultCover, file.absolutePath)
                 BookCover.upDefaultCover()
             }.onFailure {
                 appCtx.toastOnUi(it.localizedMessage)

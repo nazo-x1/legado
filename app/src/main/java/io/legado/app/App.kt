@@ -23,7 +23,7 @@ import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.RuleBigDataHelp
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.config.ThemeConfig.applyDayNight
+import io.legado.app.help.config.ThemeConfig.applyDayTheme
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.Cronet
 import io.legado.app.model.BookCover
@@ -45,7 +45,7 @@ class App : Application() {
         //预下载Cronet so
         Cronet.preDownload()
         createNotificationChannels()
-        applyDayNight(this)
+        applyDayTheme(this)
         LiveEventBus.config()
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
@@ -84,7 +84,7 @@ class App : Application() {
         super.onConfigurationChanged(newConfig)
         val diff = newConfig.diff(oldConfig)
         if ((diff and ActivityInfo.CONFIG_UI_MODE) != 0) {
-            applyDayNight(this)
+            applyDayTheme(this)
         }
         oldConfig = Configuration(newConfig)
     }

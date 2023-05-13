@@ -6,12 +6,6 @@ object PreferKey {
     const val userAgent = "userAgent"
     const val showUnread = "showUnread"
     const val bookGroupStyle = "bookGroupStyle"
-    const val useDefaultCover = "useDefaultCover"
-    const val loadCoverOnlyWifi = "loadCoverOnlyWifi"
-    const val coverShowName = "coverShowName"
-    const val coverShowAuthor = "coverShowAuthor"
-    const val coverShowNameN = "coverShowNameN"
-    const val coverShowAuthorN = "coverShowAuthorN"
     const val remoteServerId = "remoteServerId"
     const val hideStatusBar = "hideStatusBar"
     const val clickActionTL = "clickActionTopLeft"
@@ -62,6 +56,7 @@ object PreferKey {
     const val changeSourceLoadInfo = "changeSourceLoadInfo"
     const val changeSourceLoadWordCount = "changeSourceLoadWordCount"
     const val chineseConverterType = "chineseConverterType"
+    // here!
     const val launcherIcon = "launcherIcon"
     const val textSelectAble = "selectText"
     const val shareLayout = "shareLayout"
@@ -74,8 +69,13 @@ object PreferKey {
     const val barElevation = "barElevation"
     const val transparentStatusBar = "transparentStatusBar"
     const val immNavigationBar = "immNavigationBar"
+
+    const val useDefaultCover = "useDefaultCover"
+    const val loadCoverOnlyWifi = "loadCoverOnlyWifi"
     const val defaultCover = "defaultCover"
-    const val defaultCoverDark = "defaultCoverDark"
+    const val coverShowName = "coverShowName"
+    const val coverShowAuthor = "coverShowAuthor"
+
     const val replaceEnableDefault = "replaceEnableDefault"
     const val showBrightnessView = "showBrightnessView"
     const val autoClearExpired = "autoClearExpired"
@@ -103,12 +103,12 @@ object PreferKey {
     const val tocUiUseReplace = "tocUiUseReplace"
     const val enableReadRecord = "enableReadRecord"
     const val localBookImportSort = "localBookImportSort"
+
     const val customWelcome = "customWelcome"
     const val welcomeImage = "welcomeImagePath"
-    // here!
-    const val welcomeImageDark = "welcomeImagePathDark"
     const val welcomeShowText = "welcomeShowText"
     const val welcomeShowIcon = "welcomeShowIcon"
+
     const val pageTouchSlop = "pageTouchSlop"
     const val showAddToShelfAlert = "showAddToShelfAlert"
     const val asyncLoadImage = "asyncLoadImage"
@@ -133,11 +133,6 @@ object PreferKey {
     const val bgImage = "backgroundImage"
     const val bgImageBlurring = "backgroundImageBlurring"
 
-    const val cNPrimary = "colorPrimaryNight"
-    const val cNAccent = "colorAccentNight"
-    const val cNBackground = "colorBackgroundNight"
-    const val cNBBackground = "colorBottomBackgroundNight"
-    const val bgImageN = "backgroundImageNight"
     const val showReadTitleAddition = "showReadTitleAddition"
     const val readBarStyleFollowPage = "readBarStyleFollowPage"
     const val contentSelectSpeakMod = "contentReadAloudMod"
