@@ -209,7 +209,7 @@
     <string name="select_all">Seleccionar todo</string>
     <string name="select_all_count">Selecionar todo (%1$d/%2$d)</string>
     <string name="select_cancel_count">Dejar de seleccionar todo (%1$d/%2$d)</string>
-    <string name="dark_theme">Modo oscuro</string>
+    <string name="brightness_view">Widget de brillo</string>
     <string name="welcome">Página de bienvenida</string>
     <string name="download_start">Iniciar descarga</string>
     <string name="download_cancel">Cancelar descarga</string>

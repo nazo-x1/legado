@@ -6,18 +6,17 @@ import android.graphics.Color
 import android.util.DisplayMetrics
 import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatDelegate
-import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.DefaultData
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.model.BookCover
 import io.legado.app.utils.BitmapUtils
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.hexString
@@ -118,42 +117,43 @@ object ThemeConfig {
         val primary = Color.parseColor(config.primaryColor)
         val accent = Color.parseColor(config.accentColor)
         val background = Color.parseColor(config.backgroundColor)
-        val bBackground = Color.parseColor(config.bottomBackground)
+        val bottomBackground = Color.parseColor(config.bottomBackground)
         context.putPrefInt(PreferKey.cPrimary, primary)
         context.putPrefInt(PreferKey.cAccent, accent)
         context.putPrefInt(PreferKey.cBackground, background)
-        context.putPrefInt(PreferKey.cBBackground, bBackground)
+        context.putPrefInt(PreferKey.cBottomBackground, bottomBackground)
         applyDayTheme(context)
     }
 
-    fun saveDayTheme(context: Context, name: String) {
-        val primary =
-            context.getPrefInt(PreferKey.cPrimary, context.getCompatColor(R.color.md_brown_500))
-        val accent =
-            context.getPrefInt(PreferKey.cAccent, context.getCompatColor(R.color.md_red_600))
-        val background =
-            context.getPrefInt(PreferKey.cBackground, context.getCompatColor(R.color.md_grey_100))
-        val bBackground =
-            context.getPrefInt(PreferKey.cBBackground, context.getCompatColor(R.color.md_grey_200))
+    fun saveTheme(context: Context, name: String) {
+        val primary = context.getPrefInt(PreferKey.cPrimary, Color.WHITE)
+        val accent = context.getPrefInt(PreferKey.cAccent, Color.BLACK)
+        val background = context.getPrefInt(PreferKey.cBackground, Color.WHITE)
+        val bottomBackground = context.getPrefInt(PreferKey.cBottomBackground, Color.WHITE)
         val config = Config(
             themeName = name,
             primaryColor = "#${primary.hexString}",
             accentColor = "#${accent.hexString}",
             backgroundColor = "#${background.hexString}",
-            bottomBackground = "#${bBackground.hexString}"
+            bottomBackground = "#${bottomBackground.hexString}"
         )
         addConfig(config)
     }
 
-    /**
-     * 更新主题
-     */
     fun applyTheme(context: Context) = with(context) {
+        val primary = getPrefInt(PreferKey.cPrimary, Color.WHITE)
+        val accent = getPrefInt(PreferKey.cAccent, Color.BLACK)
+        var background = getPrefInt(PreferKey.cBackground, Color.WHITE)
+        if (!ColorUtils.isColorLight(background)) {
+            background = Color.WHITE
+            putPrefInt(PreferKey.cBackground, background)
+        }
+        val bottomBackground = getPrefInt(PreferKey.cBottomBackground, Color.WHITE)
         ThemeStore.editTheme(this)
-            .primaryColor(Color.WHITE)
-            .accentColor(Color.BLACK)
-            .backgroundColor(Color.WHITE)
-            .bottomBackground(Color.WHITE)
+            .primaryColor(ColorUtils.withAlpha(primary, 1f))
+            .accentColor(ColorUtils.withAlpha(accent, 1f))
+            .backgroundColor(ColorUtils.withAlpha(background, 1f))
+            .bottomBackground(ColorUtils.withAlpha(bottomBackground, 1f))
             .apply()
     }
 

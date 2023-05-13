@@ -129,7 +129,7 @@ object PreferKey {
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"
     const val cBackground = "colorBackground"
-    const val cBBackground = "colorBottomBackground"
+    const val cBottomBackground = "colorBottomBackground"
     const val bgImage = "backgroundImage"
     const val bgImageBlurring = "backgroundImageBlurring"
 

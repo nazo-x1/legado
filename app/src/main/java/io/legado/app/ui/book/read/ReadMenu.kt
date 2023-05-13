@@ -152,8 +152,6 @@ class ReadMenu @JvmOverloads constructor(
     }
 
     private fun initView(reset: Boolean = false) = binding.run {
-        // here!
-        fabNightTheme.setImageResource(R.drawable.ic_brightness)
         initAnimation()
         if (immersiveMenu) {
             val lightTextColor = ColorUtils.withAlpha(ColorUtils.lightenColor(textColor), 0.75f)
@@ -182,8 +180,6 @@ class ReadMenu @JvmOverloads constructor(
         fabAutoPage.setColorFilter(textColor)
         fabReplaceRule.backgroundTintList = bottomBackgroundList
         fabReplaceRule.setColorFilter(textColor)
-        fabNightTheme.backgroundTintList = bottomBackgroundList
-        fabNightTheme.setColorFilter(textColor)
         tvPre.setTextColor(textColor)
         tvNext.setTextColor(textColor)
         ivCatalog.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
@@ -398,9 +394,6 @@ class ReadMenu @JvmOverloads constructor(
 
         //替换
         fabReplaceRule.setOnClickListener { callBack.openReplaceRule() }
-
-        //夜间模式
-
 
         //上一章
         tvPre.setOnClickListener { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }

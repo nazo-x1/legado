@@ -87,7 +87,7 @@ class ThemeConfigFragment : PreferenceFragment(),
             PreferKey.cPrimary,
             PreferKey.cAccent,
             PreferKey.cBackground,
-            PreferKey.cBBackground -> {
+            PreferKey.cBottomBackground -> {
                 upTheme()
             }
         }
@@ -142,7 +142,7 @@ class ThemeConfigFragment : PreferenceFragment(),
             customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
-                    ThemeConfig.saveDayTheme(requireContext(), "saveDayTheme")
+                    ThemeConfig.saveTheme(requireContext(), "saveDayTheme")
                 }
             }
             noButton()

@@ -213,7 +213,7 @@
     <string name="select_all">Selecionar tudo</string>
     <string name="select_all_count">Selecionar tudo(%1$d/%2$d)</string>
     <string name="select_cancel_count">Cancelar a seleção de todos(%1$d/%2$d)</string>
-    <string name="dark_theme">Modo escuro</string>
+    <string name="brightness_view">O widget de brilho</string>
     <string name="welcome">Página de boas-vindas</string>
     <string name="download_start">Iníciar o download</string>
     <string name="download_cancel">Cancelar o download</string>
