@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
 	<string-array name="server_type">
 		<item>WEBDAV</item>
@@ -78,16 +78,6 @@
 	<string-array name="progress_bar_behavior_title">
 		<item>调整本章页数</item>
 		<item>调整章节位置</item>
-	</string-array>
-
-	<string-array name="icon_names" tools:ignore="Typos">
-		<item>iconMain</item>
-		<item>icon1</item>
-		<item>icon2</item>
-		<item>icon3</item>
-		<item>icon4</item>
-		<item>icon5</item>
-		<item>icon6</item>
 	</string-array>
 
 	<string-array name="chinese_mode">

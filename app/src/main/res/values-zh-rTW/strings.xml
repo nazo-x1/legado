@@ -220,7 +220,6 @@
     <string name="download_count">已下載 %1$d/%2$d</string>
     <string name="import_select_book">匯入選擇書籍</string>
     <string name="threads_num_title">更新和搜尋執行緒數，太多會卡頓</string>
-    <string name="change_icon">切換圖示</string>
     <string name="remove_from_bookshelf">刪除書籍</string>
     <string name="start_read">開始閱讀</string>
     <string name="data_loading">載入資料中…</string>
@@ -556,7 +555,6 @@
     <string name="cannot_empty">輸入不能為空</string>
     <string name="clear_find_cache">清空發現快取</string>
     <string name="edit_find">編輯發現</string>
-    <string name="change_icon_summary">切換軟體顯示在桌面的圖示</string>
     <string name="help">幫助</string>
     <string name="my">我的</string>
     <string name="reading">閱讀</string>

@@ -42,7 +42,6 @@ object BackupConfig {
         PreferKey.backupPath,
         PreferKey.defaultBookTreeUri,
         PreferKey.webDavDeviceName,
-        PreferKey.launcherIcon,
         PreferKey.bitmapCacheSize,
         PreferKey.webServiceWakeLock,
         PreferKey.readAloudWakeLock,

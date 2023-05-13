@@ -3,11 +3,9 @@ package io.legado.app.help.storage
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.constant.AppConst.androidId
 import io.legado.app.constant.AppLog
-import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -26,7 +24,6 @@ import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.data.entities.Server
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.DirectLinkUpload
-import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.upType
 import io.legado.app.help.config.LocalConfig
@@ -41,16 +38,11 @@ import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getPrefString
 import io.legado.app.utils.getSharedPreferences
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.openInputStream
-import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileInputStream
@@ -60,7 +52,7 @@ import java.io.FileInputStream
  */
 object Restore {
 
-    suspend fun restore(context: Context, uri: Uri) {
+    fun restore(context: Context, uri: Uri) {
         kotlin.runCatching {
             FileUtils.delete(Backup.backupPath)
             if (uri.isContentScheme()) {
@@ -83,7 +75,7 @@ object Restore {
         }
     }
 
-    suspend fun restore(path: String) {
+    fun restore(path: String) {
         val aes = BackupAES()
         fileToListT<Book>(path, "bookshelf.json")?.let {
             it.forEach { book ->
@@ -248,13 +240,6 @@ object Restore {
             autoReadSpeed = appCtx.getPrefInt(PreferKey.autoReadSpeed, 46)
         }
         appCtx.toastOnUi(R.string.restore_success)
-        withContext(Main) {
-            delay(100)
-            if (!BuildConfig.DEBUG) {
-                LauncherIconHelp.changeIcon(appCtx.getPrefString(PreferKey.launcherIcon))
-            }
-            postEvent(EventBus.RECREATE, "")
-        }
     }
 
     private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {
