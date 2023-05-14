@@ -49,62 +49,50 @@
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
-    <!-- // here! -->
+    <io.legado.app.lib.prefs.ColorPreference
+        android:defaultValue="@color/white"
+        android:key="colorPrimary"
+        android:summary="@string/day_color_primary"
+        android:title="@string/primary"
+        app:cpv_dialogType="preset"
+        app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.prefs.PreferenceCategory
-        android:key="dayThemeCategory"
-        android:title="@string/day"
-        app:allowDividerAbove="true"
+    <io.legado.app.lib.prefs.ColorPreference
+        android:defaultValue="@color/black"
+        android:key="colorAccent"
+        android:summary="@string/day_color_accent"
+        android:title="@string/accent"
+        app:cpv_dialogType="preset"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.lib.prefs.ColorPreference
+        android:defaultValue="@color/white"
+        android:key="colorBackground"
+        android:summary="@string/day_background_color"
+        android:title="@string/background_color"
+        app:cpv_dialogType="preset"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.lib.prefs.ColorPreference
+        android:defaultValue="@color/white"
+        android:key="colorBottomBackground"
+        android:summary="@string/day_navbar_color"
+        android:title="@string/navbar_color"
+        app:allowDividerAbove="false"
         app:allowDividerBelow="false"
-        app:iconSpaceReserved="false"
-        app:layout="@layout/view_preference_category">
+        app:cpv_dialogType="preset"
+        app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.prefs.ColorPreference
-            android:defaultValue="@color/white"
-            android:key="colorPrimary"
-            android:summary="@string/day_color_primary"
-            android:title="@string/primary"
-            app:cpv_dialogType="preset"
-            app:iconSpaceReserved="false" />
+    <io.legado.app.lib.prefs.Preference
+        android:key="backgroundImage"
+        android:title="@string/background_image" />
 
-        <io.legado.app.lib.prefs.ColorPreference
-            android:defaultValue="@color/black"
-            android:key="colorAccent"
-            android:summary="@string/day_color_accent"
-            android:title="@string/accent"
-            app:cpv_dialogType="preset"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.ColorPreference
-            android:defaultValue="@color/white"
-            android:key="colorBackground"
-            android:summary="@string/day_background_color"
-            android:title="@string/background_color"
-            app:cpv_dialogType="preset"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.ColorPreference
-            android:defaultValue="@color/white"
-            android:key="colorBottomBackground"
-            android:summary="@string/day_navbar_color"
-            android:title="@string/navbar_color"
-            app:allowDividerAbove="false"
-            app:allowDividerBelow="false"
-            app:cpv_dialogType="preset"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.Preference
-            android:key="backgroundImage"
-            android:title="@string/background_image" />
-
-        <io.legado.app.lib.prefs.Preference
-            android:key="saveDayTheme"
-            android:summary="@string/save_day_theme_summary"
-            android:title="@string/save_theme_config"
-            app:allowDividerAbove="false"
-            app:allowDividerBelow="false"
-            app:iconSpaceReserved="false" />
-
-    </io.legado.app.lib.prefs.PreferenceCategory>
+    <io.legado.app.lib.prefs.Preference
+        android:key="saveDayTheme"
+        android:summary="@string/save_day_theme_summary"
+        android:title="@string/save_theme_config"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false" />
 
 </androidx.preference.PreferenceScreen>

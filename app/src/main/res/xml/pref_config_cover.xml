@@ -25,41 +25,29 @@
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
-    <!-- // here! -->
-
-    <io.legado.app.lib.prefs.PreferenceCategory
-        android:key="dayThemeCategory"
-        android:title="@string/day"
-        app:allowDividerAbove="true"
+    <io.legado.app.lib.prefs.Preference
+        android:key="defaultCover"
+        android:title="@string/default_cover"
+        app:allowDividerAbove="false"
         app:allowDividerBelow="false"
-        app:iconSpaceReserved="false"
-        app:layout="@layout/view_preference_category">
+        app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.prefs.Preference
-            android:key="defaultCover"
-            android:title="@string/default_cover"
-            app:allowDividerAbove="false"
-            app:allowDividerBelow="false"
-            app:iconSpaceReserved="false" />
+    <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:key="coverShowName"
+        android:title="@string/cover_show_name"
+        android:summary="@string/cover_show_name_summary"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.prefs.SwitchPreference
-            android:defaultValue="true"
-            android:key="coverShowName"
-            android:title="@string/cover_show_name"
-            android:summary="@string/cover_show_name_summary"
-            app:allowDividerAbove="false"
-            app:allowDividerBelow="false"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.SwitchPreference
-            android:defaultValue="true"
-            android:key="coverShowAuthor"
-            android:title="@string/cover_show_author"
-            android:summary="@string/cover_show_author_summary"
-            app:allowDividerAbove="false"
-            app:allowDividerBelow="false"
-            app:iconSpaceReserved="false" />
-
-    </io.legado.app.lib.prefs.PreferenceCategory>
+    <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:key="coverShowAuthor"
+        android:title="@string/cover_show_author"
+        android:summary="@string/cover_show_author_summary"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false" />
 
 </androidx.preference.PreferenceScreen>

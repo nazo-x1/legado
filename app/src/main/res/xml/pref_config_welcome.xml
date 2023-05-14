@@ -11,41 +11,29 @@
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
-    <!-- // here! -->
-
-    <io.legado.app.lib.prefs.PreferenceCategory
-        android:key="dayThemeCategory"
-        android:title="@string/day"
-        app:allowDividerAbove="true"
+    <io.legado.app.lib.prefs.Preference
+        android:key="welcomeImagePath"
+        android:title="@string/background_image"
+        app:allowDividerAbove="false"
         app:allowDividerBelow="false"
-        app:iconSpaceReserved="false"
-        app:layout="@layout/view_preference_category">
+        app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.prefs.Preference
-            android:key="welcomeImagePath"
-            android:title="@string/background_image"
-            app:allowDividerAbove="false"
-            app:allowDividerBelow="false"
-            app:iconSpaceReserved="false" />
+    <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:key="welcomeShowText"
+        android:summary="@string/welcome_text"
+        android:title="@string/show_welcome_text"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.prefs.SwitchPreference
-            android:defaultValue="true"
-            android:key="welcomeShowText"
-            android:summary="@string/welcome_text"
-            android:title="@string/show_welcome_text"
-            app:allowDividerAbove="false"
-            app:allowDividerBelow="false"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.SwitchPreference
-            android:defaultValue="true"
-            android:key="welcomeShowIcon"
-            android:summary="@string/show_default_book_icon"
-            android:title="@string/show_icon"
-            app:allowDividerAbove="false"
-            app:allowDividerBelow="false"
-            app:iconSpaceReserved="false" />
-
-    </io.legado.app.lib.prefs.PreferenceCategory>
+    <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:key="welcomeShowIcon"
+        android:summary="@string/show_default_book_icon"
+        android:title="@string/show_icon"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false" />
 
 </androidx.preference.PreferenceScreen>

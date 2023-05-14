@@ -704,11 +704,10 @@
     <string name="accent">Destaque</string>
     <string name="background_color">Cor de fundo</string>
     <string name="navbar_color">Cor de NavBar</string>
-    <string name="day">Dia</string>
-    <string name="day_color_primary">Dia,Principal</string>
-    <string name="day_color_accent">Dia,Destaque</string>
-    <string name="day_background_color">Dia,Cor de fundo</string>
-    <string name="day_navbar_color">Dia,Cor de NavBar</string>
+    <string name="day_color_primary">Principal</string>
+    <string name="day_color_accent">Destaque</string>
+    <string name="day_background_color">Cor de fundo</string>
+    <string name="day_navbar_color">Cor de NavBar</string>
     <string name="night">Noite</string>
     <string name="night_primary">Noite,Principal</string>
     <string name="night_accent">Noite,Destaque</string>

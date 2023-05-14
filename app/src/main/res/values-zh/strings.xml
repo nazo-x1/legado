@@ -705,11 +705,10 @@
     <string name="accent">强调色</string>
     <string name="background_color">背景色</string>
     <string name="navbar_color">底部操作栏颜色</string>
-    <string name="day">白天</string>
-    <string name="day_color_primary">白天，主色调</string>
-    <string name="day_color_accent">白天，强调色</string>
-    <string name="day_background_color">白天，背景色</string>
-    <string name="day_navbar_color">白天，底栏色</string>
+    <string name="day_color_primary">主色调</string>
+    <string name="day_color_accent">强调色</string>
+    <string name="day_background_color">背景色</string>
+    <string name="day_navbar_color">底栏色</string>
     <string name="night">夜间</string>
     <string name="night_primary">夜间，主色调</string>
     <string name="night_accent">夜间，强调色</string>
