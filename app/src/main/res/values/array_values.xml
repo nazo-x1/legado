@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="Typos">
 
+    <string-array name="icons">
+        <item>ic_launcher</item>
+        <item>launcher1</item>
+        <item>launcher2</item>
+    </string-array>
+
     <string-array name="screen_time_out_value">
         <item>0</item>
         <item>60</item>

@@ -69,3 +69,6 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
     }
 
 }
+
+class Launcher1 : WelcomeActivity()
+class Launcher2 : WelcomeActivity()

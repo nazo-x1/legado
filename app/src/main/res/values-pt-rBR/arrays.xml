@@ -55,6 +55,12 @@
 		<item>反向竖屏</item>
 	</string-array>
 
+	<string-array name="icon_names">
+		<item>Ícone da tela de tinta digital</item>
+		<item>Ícone de tela de tinta colorida</item>
+		<item>Ícone do MatePad Paper</item>>
+	</string-array>
+
 	<string-array name="chinese_mode">
 		<item>Desativado</item>
 		<item>Tradicional a Simplificado</item>

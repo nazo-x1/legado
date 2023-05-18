@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
 	<string-array name="server_type">
 		<item>WEBDAV</item>
@@ -80,6 +80,12 @@
 		<item>调整章节位置</item>
 	</string-array>
 
+	<string-array name="icon_names" tools:ignore="Typos">
+		<item>E-Ink Icon</item>
+		<item>Color E-Ink Icon</item>
+		<item>MatePadPaper Icon</item>
+	</string-array>
+
 	<string-array name="chinese_mode">
 		<item>Off</item>
 		<item>Traditional to Simplified</item>
@@ -125,5 +131,11 @@
 		<item>RssSource</item>
 		<item>ReplaceRule</item>
 	</string-array>
+
+	<integer-array name="icon_id">
+		<item>@drawable/ic_launcher</item>
+		<item>@drawable/ic_launcher_color</item>
+		<item>@drawable/ic_launcher_matepad_paper</item>
+	</integer-array>
 
 </resources>

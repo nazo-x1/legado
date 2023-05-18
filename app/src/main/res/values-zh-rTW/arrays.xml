@@ -53,6 +53,12 @@
         <item>調整章節位置</item>
     </string-array>
 
+    <string-array name="icon_names">
+        <item>墨水屏圖標</item>
+        <item>彩色墨水屏圖標</item>
+        <item>MatePad Paper圖標</item>>
+    </string-array>
+
     <string-array name="chinese_mode">
         <item>關閉</item>
         <item>繁體轉簡體</item>

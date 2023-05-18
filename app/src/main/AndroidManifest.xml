@@ -38,6 +38,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- 图标1 -->
+        <activity
+            android:name=".ui.welcome.Launcher1"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_color">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!-- 图标2 -->
+        <activity
+            android:name=".ui.welcome.Launcher2"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_matepad_paper">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <!-- 主界面 -->
         <activity
             android:name=".ui.main.MainActivity"
