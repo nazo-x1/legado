@@ -15,17 +15,19 @@
 
 <script setup>
 import { Edit } from "@element-plus/icons-vue";
+import { getSourceUniqueKey } from "@/utils/souce";
 
 const props = defineProps(["source"]);
 const store = useSourceStore();
-const { savedSourcesMap, currentSourceUrl, sourceUrlKey } = storeToRefs(store);
-const sourceUrl = computed(() => props.source[sourceUrlKey.value]);
+const { savedSourcesMap, currentSourceUrl } = storeToRefs(store);
+const sourceUrl = computed(() => getSourceUniqueKey(props.source));
 const handleSourceClick = (source) => {
   store.changeCurrentSource(source);
 };
 const isSaveError = computed(() => {
-  if (savedSourcesMap.value.size == 0) return false;
-  return !savedSourcesMap.value.has(sourceUrl.value);
+  const map = savedSourcesMap.value;
+  if (map.size == 0) return false;
+  return !map.has(sourceUrl.value);
 });
 </script>
 <style lang="scss" scoped>
