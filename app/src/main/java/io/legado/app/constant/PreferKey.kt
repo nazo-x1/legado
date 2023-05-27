@@ -47,6 +47,7 @@ object PreferKey {
     const val webDavAccount = "web_dav_account"
     const val webDavPassword = "web_dav_password"
     const val webDavDir = "webDavDir"
+    const val enableCustomExport = "enableCustomExport"
     const val exportToWebDav = "webDavCacheBackup"
     const val exportNoChapterName = "exportNoChapterName"
     const val exportType = "exportType"
@@ -124,6 +125,7 @@ object PreferKey {
     const val showLastUpdateTime = "showLastUpdateTime"
     const val clearWebViewData = "clearWebViewData"
     const val onlyLatestBackup = "onlyLatestBackup"
+    const val brightnessVwPos = "brightnessVwPos"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"
