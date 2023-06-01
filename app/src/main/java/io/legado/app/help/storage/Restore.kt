@@ -38,6 +38,7 @@ import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.getPrefString
 import io.legado.app.utils.getSharedPreferences
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.isJsonArray

@@ -36,11 +36,13 @@ import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.ConstraintModify
 import io.legado.app.utils.activity
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
+import io.legado.app.utils.modifyBegin
 import io.legado.app.utils.navigationBarGravity
 import io.legado.app.utils.navigationBarHeight
 import io.legado.app.utils.openUrl
