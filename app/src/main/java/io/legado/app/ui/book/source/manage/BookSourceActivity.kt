@@ -16,9 +16,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.BookSourcePart
-import io.legado.app.data.entities.toBookSource
 import io.legado.app.databinding.ActivityBookSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.DirectLinkUpload
@@ -72,6 +70,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private var sortAscending = true
     private var snackBar: Snackbar? = null
     private var isPaused = false
+    private var searchKey: String? = null
     private val qrResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
         showDialogFragment(ImportBookSourceDialog(it))
@@ -129,9 +128,10 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        groupMenu = menu.findItem(R.id.menu_group)?.subMenu
-        groupMenu?.findItem(R.id.action_sort)?.subMenu
-            ?.setGroupCheckable(R.id.menu_group_sort, true, true)
+        groupMenu = menu.findItem(R.id.menu_group).subMenu
+        val sortSubMenu = menu.findItem(R.id.action_sort).subMenu!!
+        sortSubMenu.findItem(R.id.menu_sort_desc).isChecked = !sortAscending
+        sortSubMenu.setGroupCheckable(R.id.menu_group_sort, true, true)
         upGroupMenu()
         return super.onPrepareOptionsMenu(menu)
     }
@@ -147,45 +147,52 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
 
             R.id.menu_import_onLine -> showImportDialog()
+
+            R.id.menu_sort_desc -> {
+                sortAscending = !sortAscending
+                item.isChecked = !sortAscending
+                upBookSource(searchView.query?.toString())
+            }
+
             R.id.menu_sort_manual -> {
                 item.isChecked = true
-                sortCheck(Sort.Default)
+                sort = Sort.Default
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_auto -> {
                 item.isChecked = true
-                sortCheck(Sort.Weight)
+                sort = Sort.Weight
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_name -> {
                 item.isChecked = true
-                sortCheck(Sort.Name)
+                sort = Sort.Name
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_url -> {
                 item.isChecked = true
-                sortCheck(Sort.Url)
+                sort = Sort.Url
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_time -> {
                 item.isChecked = true
-                sortCheck(Sort.Update)
+                sort = Sort.Update
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_respondTime -> {
                 item.isChecked = true
-                sortCheck(Sort.Respond)
+                sort = Sort.Respond
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_enable -> {
                 item.isChecked = true
-                sortCheck(Sort.Enable)
+                sort = Sort.Enable
                 upBookSource(searchView.query?.toString())
             }
 
@@ -236,6 +243,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
 
     private fun upBookSource(searchKey: String? = null) {
+        this.searchKey = searchKey
         sourceFlowJob?.cancel()
         sourceFlowJob = launch {
             when {
@@ -268,43 +276,46 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     appDb.bookSourceDao.flowSearch(searchKey)
                 }
             }.conflate().map { data ->
-                if (sortAscending) when (sort) {
-                    Sort.Weight -> data.sortedBy { it.weight }
-                    Sort.Name -> data.sortedWith { o1, o2 ->
-                        o1.bookSourceName.cnCompare(o2.bookSourceName)
-                    }
-
-                    Sort.Url -> data.sortedBy { it.bookSourceUrl }
-                    Sort.Update -> data.sortedByDescending { it.lastUpdateTime }
-                    Sort.Respond -> data.sortedBy { it.respondTime }
-                    Sort.Enable -> data.sortedWith { o1, o2 ->
-                        var sort = -o1.enabled.compareTo(o2.enabled)
-                        if (sort == 0) {
-                            sort = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                if (sortAscending) {
+                    when (sort) {
+                        Sort.Weight -> data.sortedBy { it.weight }
+                        Sort.Name -> data.sortedWith { o1, o2 ->
+                            o1.bookSourceName.cnCompare(o2.bookSourceName)
                         }
-                        sort
-                    }
 
-                    else -> data
-                }
-                else when (sort) {
-                    Sort.Weight -> data.sortedByDescending { it.weight }
-                    Sort.Name -> data.sortedWith { o1, o2 ->
-                        o2.bookSourceName.cnCompare(o1.bookSourceName)
-                    }
-
-                    Sort.Url -> data.sortedByDescending { it.bookSourceUrl }
-                    Sort.Update -> data.sortedBy { it.lastUpdateTime }
-                    Sort.Respond -> data.sortedByDescending { it.respondTime }
-                    Sort.Enable -> data.sortedWith { o1, o2 ->
-                        var sort = o1.enabled.compareTo(o2.enabled)
-                        if (sort == 0) {
-                            sort = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                        Sort.Url -> data.sortedBy { it.bookSourceUrl }
+                        Sort.Update -> data.sortedByDescending { it.lastUpdateTime }
+                        Sort.Respond -> data.sortedBy { it.respondTime }
+                        Sort.Enable -> data.sortedWith { o1, o2 ->
+                            var sort = -o1.enabled.compareTo(o2.enabled)
+                            if (sort == 0) {
+                                sort = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                            }
+                            sort
                         }
-                        sort
-                    }
 
-                    else -> data.reversed()
+                        else -> data
+                    }
+                } else {
+                    when (sort) {
+                        Sort.Weight -> data.sortedByDescending { it.weight }
+                        Sort.Name -> data.sortedWith { o1, o2 ->
+                            o2.bookSourceName.cnCompare(o1.bookSourceName)
+                        }
+
+                        Sort.Url -> data.sortedByDescending { it.bookSourceUrl }
+                        Sort.Update -> data.sortedBy { it.lastUpdateTime }
+                        Sort.Respond -> data.sortedByDescending { it.respondTime }
+                        Sort.Enable -> data.sortedWith { o1, o2 ->
+                            var sort = o1.enabled.compareTo(o2.enabled)
+                            if (sort == 0) {
+                                sort = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                            }
+                            sort
+                        }
+
+                        else -> data.reversed()
+                    }
                 }
             }.catch {
                 AppLog.put("书源界面更新书源出错", it)
@@ -319,15 +330,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private fun showHelp() {
         val text = String(assets.open("help/SourceMBookHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
-    }
-
-    private fun sortCheck(sort: Sort) {
-        if (this.sort == sort) {
-            sortAscending = !sortAscending
-        } else {
-            sortAscending = true
-            this.sort = sort
-        }
     }
 
     private fun initLiveDataGroup() {
@@ -377,7 +379,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.selection.toTypedArray())
             R.id.menu_add_group -> selectionAddToGroups()
             R.id.menu_remove_group -> selectionRemoveFromGroups()
-            R.id.menu_export_selection -> viewModel.saveToFile(adapter.selection.toBookSource()) { file ->
+            R.id.menu_export_selection -> viewModel.saveToFile(
+                adapter,
+                searchKey,
+                sortAscending,
+                sort
+            ) { file ->
                 exportDir.launch {
                     mode = HandleFileContract.EXPORT
                     fileData = HandleFileContract.FileData(
@@ -388,7 +395,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }
 
-            R.id.menu_share_source -> viewModel.saveToFile(adapter.selection.toBookSource()) {
+            R.id.menu_share_source -> viewModel.saveToFile(
+                adapter,
+                searchKey,
+                sortAscending,
+                sort
+            ) {
                 share(it)
             }
 
@@ -644,11 +656,19 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun toTop(bookSource: BookSourcePart) {
-        viewModel.topSource(bookSource)
+        if (sortAscending) {
+            viewModel.topSource(bookSource)
+        } else {
+            viewModel.bottomSource(bookSource)
+        }
     }
 
     override fun toBottom(bookSource: BookSourcePart) {
-        viewModel.bottomSource(bookSource)
+        if (sortAscending) {
+            viewModel.bottomSource(bookSource)
+        } else {
+            viewModel.topSource(bookSource)
+        }
     }
 
     override fun searchBook(bookSource: BookSourcePart) {
