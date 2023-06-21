@@ -42,9 +42,11 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 /**
@@ -66,7 +68,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private var sourceFlowJob: Job? = null
     private val groups = linkedSetOf<String>()
     private var groupMenu: SubMenu? = null
-    private var sort = Sort.Default
+    override var sort = BookSourceSort.Default
+        private set
     override var sortAscending = true
         private set
     private var snackBar: Snackbar? = null
@@ -157,43 +160,43 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
             R.id.menu_sort_manual -> {
                 item.isChecked = true
-                sort = Sort.Default
+                sort = BookSourceSort.Default
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_auto -> {
                 item.isChecked = true
-                sort = Sort.Weight
+                sort = BookSourceSort.Weight
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_name -> {
                 item.isChecked = true
-                sort = Sort.Name
+                sort = BookSourceSort.Name
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_url -> {
                 item.isChecked = true
-                sort = Sort.Url
+                sort = BookSourceSort.Url
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_time -> {
                 item.isChecked = true
-                sort = Sort.Update
+                sort = BookSourceSort.Update
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_respondTime -> {
                 item.isChecked = true
-                sort = Sort.Respond
+                sort = BookSourceSort.Respond
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_enable -> {
                 item.isChecked = true
-                sort = Sort.Enable
+                sort = BookSourceSort.Enable
                 upBookSource(searchView.query?.toString())
             }
 
@@ -279,15 +282,15 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }.conflate().map { data ->
                 if (sortAscending) {
                     when (sort) {
-                        Sort.Weight -> data.sortedBy { it.weight }
-                        Sort.Name -> data.sortedWith { o1, o2 ->
+                        BookSourceSort.Weight -> data.sortedBy { it.weight }
+                        BookSourceSort.Name -> data.sortedWith { o1, o2 ->
                             o1.bookSourceName.cnCompare(o2.bookSourceName)
                         }
 
-                        Sort.Url -> data.sortedBy { it.bookSourceUrl }
-                        Sort.Update -> data.sortedByDescending { it.lastUpdateTime }
-                        Sort.Respond -> data.sortedBy { it.respondTime }
-                        Sort.Enable -> data.sortedWith { o1, o2 ->
+                        BookSourceSort.Url -> data.sortedBy { it.bookSourceUrl }
+                        BookSourceSort.Update -> data.sortedByDescending { it.lastUpdateTime }
+                        BookSourceSort.Respond -> data.sortedBy { it.respondTime }
+                        BookSourceSort.Enable -> data.sortedWith { o1, o2 ->
                             var sort = -o1.enabled.compareTo(o2.enabled)
                             if (sort == 0) {
                                 sort = o1.bookSourceName.cnCompare(o2.bookSourceName)
@@ -299,15 +302,15 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     }
                 } else {
                     when (sort) {
-                        Sort.Weight -> data.sortedByDescending { it.weight }
-                        Sort.Name -> data.sortedWith { o1, o2 ->
+                        BookSourceSort.Weight -> data.sortedByDescending { it.weight }
+                        BookSourceSort.Name -> data.sortedWith { o1, o2 ->
                             o2.bookSourceName.cnCompare(o1.bookSourceName)
                         }
 
-                        Sort.Url -> data.sortedByDescending { it.bookSourceUrl }
-                        Sort.Update -> data.sortedBy { it.lastUpdateTime }
-                        Sort.Respond -> data.sortedByDescending { it.respondTime }
-                        Sort.Enable -> data.sortedWith { o1, o2 ->
+                        BookSourceSort.Url -> data.sortedByDescending { it.bookSourceUrl }
+                        BookSourceSort.Update -> data.sortedBy { it.lastUpdateTime }
+                        BookSourceSort.Respond -> data.sortedByDescending { it.respondTime }
+                        BookSourceSort.Enable -> data.sortedWith { o1, o2 ->
                             var sort = o1.enabled.compareTo(o2.enabled)
                             if (sort == 0) {
                                 sort = o1.bookSourceName.cnCompare(o2.bookSourceName)
@@ -320,9 +323,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }.catch {
                 AppLog.put("书源界面更新书源出错", it)
-            }.conflate().collect { data ->
+            }.flowOn(IO).conflate().collect { data ->
                 adapter.setItems(data, adapter.diffItemCallback)
-                itemTouchCallback.isCanDrag = sort == Sort.Default
+                itemTouchCallback.isCanDrag = sort == BookSourceSort.Default
                 delay(500)
             }
         }
@@ -335,10 +338,11 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun initLiveDataGroup() {
         launch {
-            appDb.bookSourceDao.flowGroups().conflate().collect {
+            appDb.bookSourceDao.flowGroups().flowOn(IO).conflate().collect {
                 groups.clear()
                 groups.addAll(it)
                 upGroupMenu()
+                delay(500)
             }
         }
     }
@@ -699,7 +703,4 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }
     }
 
-    enum class Sort {
-        Default, Name, Url, Weight, Update, Enable, Respond
-    }
 }

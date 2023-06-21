@@ -16,19 +16,29 @@ import java.util.zip.*
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object ZipUtils {
 
-    fun zipByteArray(byteArray: ByteArray): ByteArray {
+    fun gzipByteArray(byteArray: ByteArray): ByteArray {
         val byteOut = ByteArrayOutputStream()
         val zip = GZIPOutputStream(byteOut)
-        zip.use {
+        return zip.use {
             it.write(byteArray)
-        }
-        return byteOut.use {
-            it.toByteArray()
+            byteOut.use {
+                byteOut.toByteArray()
+            }
         }
     }
 
-    fun zipString(text: String): ByteArray {
-        return zipByteArray(text.toByteArray())
+    fun zipByteArray(byteArray: ByteArray, fileName: String): ByteArray {
+        val byteOut = ByteArrayOutputStream()
+        val zipOutputStream = ZipOutputStream(byteOut)
+        zipOutputStream.putNextEntry(ZipEntry(fileName))
+        zipOutputStream.write(byteArray)
+        zipOutputStream.closeEntry()
+        zipOutputStream.finish()
+        return zipOutputStream.use {
+            byteOut.use {
+                byteOut.toByteArray()
+            }
+        }
     }
 
     /**
@@ -174,11 +184,11 @@ object ZipUtils {
                 }
             }
         } else {
-            BufferedInputStream(FileInputStream(srcFile)).use { `is` ->
+            BufferedInputStream(FileInputStream(srcFile)).use {
                 val entry = ZipEntry(rootPath1)
                 entry.comment = comment
                 zos.putNextEntry(entry)
-                zos.write(`is`.readBytes())
+                it.copyTo(zos)
                 zos.closeEntry()
             }
         }

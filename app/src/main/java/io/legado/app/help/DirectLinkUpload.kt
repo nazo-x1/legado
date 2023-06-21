@@ -21,8 +21,12 @@ object DirectLinkUpload {
     const val ruleFileName = "directLinkUploadRule.json"
 
     @Throws(NoStackTraceException::class)
-    suspend fun upLoad(fileName: String, file: Any, contentType: String): String {
-        val rule = getRule()
+    suspend fun upLoad(
+        fileName: String,
+        file: Any,
+        contentType: String,
+        rule: Rule = getRule()
+    ): String {
         val url = rule.uploadUrl
         if (url.isBlank()) {
             throw NoStackTraceException("上传url未配置")
@@ -45,9 +49,9 @@ object DirectLinkUpload {
                     zipFile
                 }
 
-                is ByteArray -> ZipUtils.zipByteArray(file)
-                is String -> ZipUtils.zipString(file)
-                else -> ZipUtils.zipString(GSON.toJson(file))
+                is ByteArray -> ZipUtils.zipByteArray(file, fileName)
+                is String -> ZipUtils.zipByteArray(file.toByteArray(), fileName)
+                else -> ZipUtils.zipByteArray(GSON.toJson(file).toByteArray(), fileName)
             }
         }
         val analyzeUrl = AnalyzeUrl(url)
