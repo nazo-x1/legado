@@ -56,6 +56,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     private var exploreFlowJob: Job? = null
     private var groupsMenu: SubMenu? = null
     private var isActive = false
+    private var searchKey: String? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(binding.titleBar.toolbar)
@@ -122,6 +123,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     }
 
     private fun upExploreData(searchKey: String? = null, once: Boolean = false) {
+        this.searchKey = searchKey
         exploreFlowJob?.cancel()
         exploreFlowJob = launch {
             when {
@@ -208,7 +210,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     override fun onActive() {
         isActive = true
-        upExploreData()
+        upExploreData(searchKey)
     }
 
     override fun onInactive() {
@@ -218,7 +220,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     override fun onResume() {
         super.onResume()
-        if (isActive) upExploreData()
+        if (isActive) upExploreData(searchKey)
     }
 
 }
