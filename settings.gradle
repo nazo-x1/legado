@@ -9,6 +9,7 @@ pluginManagement {
         //maven { url 'https://maven.aliyun.com/repository/google' }
         //maven { url 'https://maven.aliyun.com/repository/public' }
         //maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        //maven { url 'https://repo.huaweicloud.com/repository/maven/' }
     }
 }
 
@@ -23,7 +24,7 @@ dependencyResolutionManagement {
         //maven { url "https://maven-central-asia.storage-download.googleapis.com/maven2/" }
         //maven { url 'https://maven.aliyun.com/repository/google' }
         //maven { url 'https://maven.aliyun.com/repository/public' }
-
+        //maven { url 'https://repo.huaweicloud.com/repository/maven/' }
     }
 }
 rootProject.name = 'legado'

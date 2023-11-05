@@ -8,18 +8,17 @@ import android.view.View
 import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.FragmentMyConfigBinding
+import io.legado.app.help.config.ThemeConfig
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.lib.prefs.PreferenceCategory
+import io.legado.app.lib.prefs.NameListPreference
 import io.legado.app.lib.prefs.SwitchPreference
 import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
-import io.legado.app.ui.about.DonateActivity
 import io.legado.app.ui.about.ReadRecordActivity
 import io.legado.app.ui.book.bookmark.AllBookmarkActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
@@ -28,6 +27,7 @@ import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigTag
 import io.legado.app.ui.dict.rule.DictRuleActivity
 import io.legado.app.ui.file.FileManageActivity
+import io.legado.app.ui.main.MainFragmentInterface
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.LogUtils
@@ -41,7 +41,15 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class MyFragment : BaseFragment(R.layout.fragment_my_config) {
+class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInterface {
+
+    constructor(position: Int) : this() {
+        val bundle = Bundle()
+        bundle.putInt("position", position)
+        arguments = bundle
+    }
+
+    override val position: Int? get() = arguments?.getInt("position")
 
     private val binding by viewBinding(FragmentMyConfigBinding::bind)
 
@@ -76,10 +84,6 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             putPrefBoolean(PreferKey.webService, WebService.isRun)
             addPreferencesFromResource(R.xml.pref_main)
-            if (AppConst.isPlayChannel) {
-                findPreference<PreferenceCategory>("aboutCategory")
-                    ?.removePreferenceRecursively("donate")
-            }
             findPreference<SwitchPreference>("webService")?.onLongClick {
                 if (!WebService.isRun) {
                     return@onLongClick false
@@ -153,7 +157,6 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                 }
                 "fileManage" -> startActivity<FileManageActivity>()
                 "readRecord" -> startActivity<ReadRecordActivity>()
-                "donate" -> startActivity<DonateActivity>()
                 "about" -> startActivity<AboutActivity>()
                 "exit" -> activity?.finish()
             }

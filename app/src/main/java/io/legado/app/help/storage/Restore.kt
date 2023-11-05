@@ -3,6 +3,7 @@ package io.legado.app.help.storage
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.constant.AppConst.androidId
 import io.legado.app.constant.AppLog
@@ -23,7 +24,9 @@ import io.legado.app.data.entities.RuleSub
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.data.entities.Server
 import io.legado.app.data.entities.TxtTocRule
+import io.legado.app.help.AppWebDav
 import io.legado.app.help.DirectLinkUpload
+import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.upType
 import io.legado.app.help.config.LocalConfig
@@ -44,6 +47,9 @@ import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.openInputStream
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileInputStream
@@ -53,7 +59,7 @@ import java.io.FileInputStream
  */
 object Restore {
 
-    fun restore(context: Context, uri: Uri) {
+    suspend fun restore(context: Context, uri: Uri) {
         kotlin.runCatching {
             FileUtils.delete(Backup.backupPath)
             if (uri.isContentScheme()) {
@@ -76,7 +82,7 @@ object Restore {
         }
     }
 
-    fun restore(path: String) {
+    suspend fun restore(path: String) {
         val aes = BackupAES()
         fileToListT<Book>(path, "bookshelf.json")?.let {
             it.forEach { book ->
@@ -206,6 +212,7 @@ object Restore {
                 AppLog.put("恢复阅读界面出错\n${it.localizedMessage}", it)
             }
         }
+        AppWebDav.downBgs()
         appCtx.getSharedPreferences(path, "config")?.all?.let { map ->
             val edit = appCtx.defaultSharedPreferences.edit()
 
@@ -246,6 +253,13 @@ object Restore {
             autoReadSpeed = appCtx.getPrefInt(PreferKey.autoReadSpeed, 46)
         }
         appCtx.toastOnUi(R.string.restore_success)
+        withContext(Main) {
+            delay(100)
+            if (!BuildConfig.DEBUG) {
+                LauncherIconHelp.changeIcon(appCtx.getPrefString(PreferKey.launcherIcon))
+            }
+            ThemeConfig.applyDayNight(appCtx)
+        }
     }
 
     private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {

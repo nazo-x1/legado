@@ -10,6 +10,7 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
@@ -61,7 +62,7 @@ class BookInfoActivity :
     private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
         it?.let {
             viewModel.getBook(false)?.let { book ->
-                launch {
+                lifecycleScope.launch {
                     withContext(IO) {
                         book.durChapterIndex = it.first
                         book.durChapterPos = it.second
@@ -106,6 +107,7 @@ class BookInfoActivity :
     private var chapterChanged = false
     private val waitDialog by lazy { WaitDialog(this) }
     private var editMenuItem: MenuItem? = null
+    private val book get() = viewModel.getBook(false)
 
     override val binding by viewBinding(ActivityBookInfoBinding::inflate)
     override val viewModel by viewModels<BookInfoViewModel>()
@@ -163,6 +165,7 @@ class BookInfoActivity :
                     }
                 }
             }
+
             R.id.menu_share_it -> {
                 viewModel.getBook()?.let {
                     val bookJson = GSON.toJson(it)
@@ -170,24 +173,29 @@ class BookInfoActivity :
                     shareWithQr(shareStr, it.name)
                 }
             }
+
             R.id.menu_refresh -> {
                 refreshBook()
             }
+
             R.id.menu_login -> viewModel.bookSource?.let {
                 startActivity<SourceLoginActivity> {
                     putExtra("type", "bookSource")
                     putExtra("key", it.bookSourceUrl)
                 }
             }
+
             R.id.menu_top -> viewModel.topBook()
             R.id.menu_set_source_variable -> setSourceVariable()
             R.id.menu_set_book_variable -> setBookVariable()
             R.id.menu_copy_book_url -> viewModel.getBook()?.bookUrl?.let {
                 sendToClip(it)
             }
+
             R.id.menu_copy_toc_url -> viewModel.getBook()?.tocUrl?.let {
                 sendToClip(it)
             }
+
             R.id.menu_can_update -> {
                 viewModel.getBook()?.let {
                     it.canUpdate = !it.canUpdate
@@ -196,6 +204,7 @@ class BookInfoActivity :
                     }
                 }
             }
+
             R.id.menu_clear_cache -> viewModel.clearCache()
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
             R.id.menu_split_long_chapter -> {
@@ -208,6 +217,7 @@ class BookInfoActivity :
                 item.isChecked = !item.isChecked
                 if (!item.isChecked) longToastOnUi(R.string.need_more_time_load_content)
             }
+
             R.id.menu_delete_alert -> LocalConfig.bookInfoDeleteAlert = !item.isChecked
             R.id.menu_upload -> {
                 viewModel.getBook()?.let { book ->
@@ -246,7 +256,7 @@ class BookInfoActivity :
         book: Book,
         bookWebDav: RemoteBookWebDav? = AppWebDav.defaultBookWebDav
     ) {
-        launch {
+        lifecycleScope.launch {
             waitDialog.setText("上传中.....")
             waitDialog.show()
             try {
@@ -292,12 +302,14 @@ class BookInfoActivity :
             isLoading -> {
                 binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
             }
+
             chapterList.isNullOrEmpty() -> {
                 binding.tvToc.text = getString(
                     R.string.toc_s,
                     getString(R.string.error_load_toc)
                 )
             }
+
             else -> {
                 viewModel.bookData.value?.let {
                     if (it.durChapterIndex < chapterList.size) {
@@ -325,7 +337,11 @@ class BookInfoActivity :
     private fun upGroup(groupId: Long) {
         viewModel.loadGroup(groupId) {
             if (it.isNullOrEmpty()) {
-                binding.tvGroup.text = getString(R.string.group_s, getString(R.string.no_group))
+                binding.tvGroup.text = if (book?.isLocal == true) {
+                    getString(R.string.group_s, getString(R.string.local_no_group))
+                } else {
+                    getString(R.string.group_s, getString(R.string.no_group))
+                }
             } else {
                 binding.tvGroup.text = getString(R.string.group_s, it)
             }
@@ -386,6 +402,10 @@ class BookInfoActivity :
             }
         }
         tvTocView.setOnClickListener {
+            if (viewModel.chapterListData.value.isNullOrEmpty()) {
+                toastOnUi(R.string.chapter_list_empty)
+                return@setOnClickListener
+            }
             viewModel.getBook()?.let { book ->
                 if (!viewModel.inBookshelf) {
                     viewModel.saveBook(book) {
@@ -426,13 +446,14 @@ class BookInfoActivity :
     }
 
     private fun setSourceVariable() {
-        launch {
+        lifecycleScope.launch {
             val source = viewModel.bookSource
             if (source == null) {
                 toastOnUi("书源不存在")
                 return@launch
             }
-            val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
+            val comment =
+                source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
             val variable = withContext(IO) { source.getVariable() }
             showDialogFragment(
                 VariableDialog(
@@ -446,7 +467,7 @@ class BookInfoActivity :
     }
 
     private fun setBookVariable() {
-        launch {
+        lifecycleScope.launch {
             val source = viewModel.bookSource
             if (source == null) {
                 toastOnUi("书源不存在")
@@ -516,10 +537,6 @@ class BookInfoActivity :
     }
 
     private fun openChapterList() {
-        if (viewModel.chapterListData.value.isNullOrEmpty()) {
-            toastOnUi(R.string.chapter_list_empty)
-            return
-        }
         viewModel.getBook()?.let {
             tocActivityResult.launch(it.bookUrl)
         }
@@ -612,6 +629,7 @@ class BookInfoActivity :
                     .putExtra("bookUrl", book.bookUrl)
                     .putExtra("inBookshelf", viewModel.inBookshelf)
             )
+
             else -> readBookResult.launch(
                 Intent(this, ReadBookActivity::class.java)
                     .putExtra("bookUrl", book.bookUrl)
@@ -647,9 +665,9 @@ class BookInfoActivity :
             if (viewModel.inBookshelf) {
                 viewModel.saveBook(book)
             } else if (groupId > 0) {
-                viewModel.saveBook(book)
-                viewModel.inBookshelf = true
-                upTvBookshelf()
+                viewModel.addToBookshelf {
+                    upTvBookshelf()
+                }
             }
         }
     }

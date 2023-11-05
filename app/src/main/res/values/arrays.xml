@@ -23,6 +23,7 @@
 		<item>@string/bookshelf_px_1</item>
 		<item>@string/bookshelf_px_2</item>
 		<item>@string/bookshelf_px_3</item>
+		<item>@string/bookshelf_px_4</item>
 	</string-array>
 
 	<string-array name="indent">
@@ -45,6 +46,13 @@
 		<item>@string/jf_convert_f</item>
 	</string-array>
 
+	<string-array name="theme_mode">
+		<item>Follow system</item>
+		<item>Bright mode</item>
+		<item>Dark mode</item>
+		<item>E-Ink mode</item>
+	</string-array>
+
 	<string-array name="NavBarColors">
 		<item>Auto</item>
 		<item>Black</item>
@@ -65,7 +73,7 @@
 		<item>@string/screen_portrait</item>
 		<item>@string/screen_landscape</item>
 		<item>@string/screen_sensor</item>
-		<item>反向竖屏</item>
+		<item>@string/screen_portrait_reversed</item>
 	</string-array>
 
 	<string-array name="double_page_title">
@@ -81,9 +89,13 @@
 	</string-array>
 
 	<string-array name="icon_names" tools:ignore="Typos">
-		<item>E-Ink Icon</item>
-		<item>Color E-Ink Icon</item>
-		<item>MatePadPaper Icon</item>
+		<item>iconMain</item>
+		<item>icon1</item>
+		<item>icon2</item>
+		<item>icon3</item>
+		<item>icon4</item>
+		<item>icon5</item>
+		<item>icon6</item>
 	</string-array>
 
 	<string-array name="chinese_mode">
@@ -132,10 +144,18 @@
 		<item>ReplaceRule</item>
 	</string-array>
 
-	<integer-array name="icon_id">
-		<item>@drawable/ic_launcher</item>
-		<item>@drawable/ic_launcher_color</item>
-		<item>@drawable/ic_launcher_matepad_paper</item>
-	</integer-array>
+	<string-array name="default_home_page">
+		<item>@string/bookshelf</item>
+		<item>@string/discovery</item>
+		<item>@string/rss</item>
+		<item>@string/my</item>
+	</string-array>
+
+	<string-array name="default_home_page_value">
+		<item>bookshelf</item>
+		<item>explore</item>
+		<item>rss</item>
+		<item>my</item>
+	</string-array>
 
 </resources>

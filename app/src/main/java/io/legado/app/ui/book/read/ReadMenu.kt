@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -10,7 +11,8 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
-import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+import android.view.animation.Animation
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.appcompat.widget.PopupMenu
@@ -23,38 +25,15 @@ import io.legado.app.help.IntentData
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.help.config.ThemeConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.Selector
-import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.bottomBackground
-import io.legado.app.lib.theme.buttonDisabledColor
-import io.legado.app.lib.theme.getPrimaryTextColor
-import io.legado.app.lib.theme.primaryColor
-import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.lib.theme.*
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
-import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.ConstraintModify
-import io.legado.app.utils.activity
-import io.legado.app.utils.dpToPx
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.gone
-import io.legado.app.utils.invisible
-import io.legado.app.utils.modifyBegin
-import io.legado.app.utils.navigationBarGravity
-import io.legado.app.utils.navigationBarHeight
-import io.legado.app.utils.openUrl
-import io.legado.app.utils.putPrefBoolean
-import io.legado.app.utils.startActivity
-import io.legado.app.utils.visible
-import splitties.views.bottomPadding
-import splitties.views.leftPadding
-import splitties.views.onClick
-import splitties.views.onLongClick
-import splitties.views.padding
-import splitties.views.rightPadding
+import io.legado.app.utils.*
+import splitties.views.*
 
 /**
  * 阅读界面菜单
@@ -67,6 +46,18 @@ class ReadMenu @JvmOverloads constructor(
     private val callBack: CallBack get() = activity as CallBack
     private val binding = ViewReadMenuBinding.inflate(LayoutInflater.from(context), this, true)
     private var confirmSkipToChapter: Boolean = false
+    private val menuTopIn: Animation by lazy {
+        loadAnimation(context, R.anim.anim_readbook_top_in)
+    }
+    private val menuTopOut: Animation by lazy {
+        loadAnimation(context, R.anim.anim_readbook_top_out)
+    }
+    private val menuBottomIn: Animation by lazy {
+        loadAnimation(context, R.anim.anim_readbook_bottom_in)
+    }
+    private val menuBottomOut: Animation by lazy {
+        loadAnimation(context, R.anim.anim_readbook_bottom_out)
+    }
     private val immersiveMenu: Boolean
         get() = AppConfig.readBarStyleFollowPage && ReadBookConfig.durConfig.curBgType() == 0
     private var bgColor: Int = if (immersiveMenu) {
@@ -104,6 +95,56 @@ class ReadMenu @JvmOverloads constructor(
             }
         }
     }
+    private val menuInListener = object : Animation.AnimationListener {
+        override fun onAnimationStart(animation: Animation) {
+            binding.tvSourceAction.text =
+                ReadBook.bookSource?.bookSourceName ?: context.getString(R.string.book_source)
+            binding.tvSourceAction.isGone = ReadBook.isLocalBook
+            callBack.upSystemUiVisibility()
+            binding.llBrightness.visible(showBrightnessView)
+        }
+
+        @SuppressLint("RtlHardcoded")
+        override fun onAnimationEnd(animation: Animation) {
+            val navigationBarHeight =
+                if (ReadBookConfig.hideNavigationBar) {
+                    activity?.navigationBarHeight ?: 0
+                } else {
+                    0
+                }
+            binding.run {
+                vwMenuBg.setOnClickListener { runMenuOut() }
+                root.padding = 0
+                when (activity?.navigationBarGravity) {
+                    Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
+                    Gravity.LEFT -> root.leftPadding = navigationBarHeight
+                    Gravity.RIGHT -> root.rightPadding = navigationBarHeight
+                }
+            }
+            callBack.upSystemUiVisibility()
+            if (!LocalConfig.readMenuHelpVersionIsLast) {
+                callBack.showReadMenuHelp()
+            }
+        }
+
+        override fun onAnimationRepeat(animation: Animation) = Unit
+    }
+    private val menuOutListener = object : Animation.AnimationListener {
+        override fun onAnimationStart(animation: Animation) {
+            binding.vwMenuBg.setOnClickListener(null)
+        }
+
+        override fun onAnimationEnd(animation: Animation) {
+            this@ReadMenu.invisible()
+            binding.titleBar.invisible()
+            binding.bottomMenu.invisible()
+            cnaShowMenu = false
+            onMenuOutEnd?.invoke()
+            callBack.upSystemUiVisibility()
+        }
+
+        override fun onAnimationRepeat(animation: Animation) = Unit
+    }
 
     init {
         initView()
@@ -112,6 +153,12 @@ class ReadMenu @JvmOverloads constructor(
     }
 
     private fun initView(reset: Boolean = false) = binding.run {
+        if (AppConfig.isNightTheme) {
+            fabNightTheme.setImageResource(R.drawable.ic_daytime)
+        } else {
+            fabNightTheme.setImageResource(R.drawable.ic_brightness)
+        }
+        initAnimation()
         if (immersiveMenu) {
             val lightTextColor = ColorUtils.withAlpha(ColorUtils.lightenColor(textColor), 0.75f)
             titleBar.setTextColor(textColor)
@@ -139,6 +186,8 @@ class ReadMenu @JvmOverloads constructor(
         fabAutoPage.setColorFilter(textColor)
         fabReplaceRule.backgroundTintList = bottomBackgroundList
         fabReplaceRule.setColorFilter(textColor)
+        fabNightTheme.backgroundTintList = bottomBackgroundList
+        fabNightTheme.setColorFilter(textColor)
         tvPre.setTextColor(textColor)
         tvNext.setTextColor(textColor)
         ivCatalog.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
@@ -216,66 +265,29 @@ class ReadMenu @JvmOverloads constructor(
         activity?.window?.attributes = params
     }
 
-    private fun menuTopInStart() {
-        binding.tvSourceAction.text =
-            ReadBook.bookSource?.bookSourceName ?: context.getString(R.string.book_source)
-        binding.tvSourceAction.isGone = ReadBook.isLocalBook
-        callBack.upSystemUiVisibility()
-        binding.llBrightness.visible(showBrightnessView)
-    }
-
-    private fun menuTopInEnd() {
-        val navigationBarHeight =
-            if (ReadBookConfig.hideNavigationBar) {
-                activity?.navigationBarHeight ?: 0
-            } else {
-                0
-            }
-        binding.run {
-            vwMenuBg.setOnClickListener { runMenuOut() }
-            root.padding = 0
-            when (activity?.navigationBarGravity) {
-                Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
-                Gravity.START -> root.leftPadding = navigationBarHeight
-                Gravity.END -> root.rightPadding = navigationBarHeight
-            }
-        }
-        callBack.upSystemUiVisibility()
-        if (!LocalConfig.readMenuHelpVersionIsLast) {
-            callBack.showReadMenuHelp()
-        }
-    }
-
-    fun runMenuIn() {
+    fun runMenuIn(anim: Boolean = !AppConfig.isEInkMode) {
         this.visible()
         binding.titleBar.visible()
         binding.bottomMenu.visible()
-        menuTopInStart()
-        binding.titleBar.visible()
-        menuTopInEnd()
-        binding.bottomMenu.visible()
+        if (anim) {
+            binding.titleBar.startAnimation(menuTopIn)
+            binding.bottomMenu.startAnimation(menuBottomIn)
+        } else {
+            menuInListener.onAnimationStart(menuBottomIn)
+            menuInListener.onAnimationEnd(menuBottomIn)
+        }
     }
 
-    private fun menuTopOutStart() {
-        binding.vwMenuBg.setOnClickListener(null)
-    }
-
-    private fun menuTopOutEnd() {
-        this@ReadMenu.invisible()
-        binding.titleBar.invisible()
-        binding.bottomMenu.invisible()
-        cnaShowMenu = false
-        onMenuOutEnd?.invoke()
-        callBack.upSystemUiVisibility()
-    }
-
-    fun runMenuOut(onMenuOutEnd: (() -> Unit)? = null) {
+    fun runMenuOut(anim: Boolean = !AppConfig.isEInkMode, onMenuOutEnd: (() -> Unit)? = null) {
         this.onMenuOutEnd = onMenuOutEnd
         if (this.isVisible) {
-            menuTopOutStart()
-            binding.titleBar.visible(false)
-            menuTopOutEnd()
-            binding.bottomMenu.visible(false)
+            if (anim) {
+                binding.titleBar.startAnimation(menuTopOut)
+                binding.bottomMenu.startAnimation(menuBottomOut)
+            } else {
+                menuOutListener.onAnimationStart(menuBottomOut)
+                menuOutListener.onAnimationEnd(menuBottomOut)
+            }
         }
     }
 
@@ -405,6 +417,12 @@ class ReadMenu @JvmOverloads constructor(
         //替换
         fabReplaceRule.setOnClickListener { callBack.openReplaceRule() }
 
+        //夜间模式
+        fabNightTheme.setOnClickListener {
+            AppConfig.isNightTheme = !AppConfig.isNightTheme
+            ThemeConfig.applyDayNight(context)
+        }
+
         //上一章
         tvPre.setOnClickListener { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
 
@@ -442,6 +460,11 @@ class ReadMenu @JvmOverloads constructor(
                 callBack.showMoreSetting()
             }
         }
+    }
+
+    private fun initAnimation() {
+        menuTopIn.setAnimationListener(menuInListener)
+        menuTopOut.setAnimationListener(menuOutListener)
     }
 
     fun upBookView() {

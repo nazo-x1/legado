@@ -570,7 +570,11 @@ object ReadBookConfig {
                         BitmapDrawable(resources, bitmap?.resizeAndRecycle(width, height))
                     }
                     else -> {
-                        val bitmap = BitmapUtils.decodeBitmap(curBgStr(), width, height)
+                        val path = curBgStr().let {
+                            if (it.contains(File.separator)) it
+                            else FileUtils.getPath(appCtx.externalFiles, "bg", curBgStr())
+                        }
+                        val bitmap = BitmapUtils.decodeBitmap(path, width, height)
                         BitmapDrawable(resources, bitmap?.resizeAndRecycle(width, height))
                     }
                 }

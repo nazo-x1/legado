@@ -6,7 +6,9 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.splitNotBlank
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 @Dao
@@ -286,31 +288,25 @@ interface BookSourceDao {
         }
     }
 
-    val allGroups: List<String>
-        get() {
-            return dealGroups(allGroupsUnProcessed)
-        }
+    fun allGroups(): List<String> = dealGroups(allGroupsUnProcessed)
 
-    val allEnabledGroups: List<String>
-        get() {
-            return dealGroups(allEnabledGroupsUnProcessed)
-        }
+    fun allEnabledGroups(): List<String> = dealGroups(allEnabledGroupsUnProcessed)
 
     fun flowGroups(): Flow<List<String>> {
         return flowGroupsUnProcessed().map { list ->
             dealGroups(list)
-        }
+        }.flowOn(IO)
     }
 
     fun flowExploreGroups(): Flow<List<String>> {
         return flowExploreGroupsUnProcessed().map { list ->
             dealGroups(list)
-        }
+        }.flowOn(IO)
     }
 
     fun flowEnabledGroups(): Flow<List<String>> {
         return flowEnabledGroupsUnProcessed().map { list ->
             dealGroups(list)
-        }
+        }.flowOn(IO)
     }
 }

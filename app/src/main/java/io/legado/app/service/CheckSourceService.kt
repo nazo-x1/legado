@@ -2,6 +2,7 @@ package io.legado.app.service
 
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.lifecycleScope
 import com.script.ScriptException
 import io.legado.app.R
 import io.legado.app.base.BaseService
@@ -9,6 +10,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
+import io.legado.app.constant.NotificationId
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
@@ -108,7 +110,7 @@ class CheckSourceService : BaseService() {
         synchronized(this) {
             processIndex++
         }
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             if (index < allIds.size) {
                 val sourceUrl = allIds[index]
                 appDb.bookSourceDao.getBookSource(sourceUrl)?.let { source ->
@@ -264,7 +266,7 @@ class CheckSourceService : BaseService() {
         notificationBuilder.setContentText(notificationMsg)
         notificationBuilder.setProgress(allIds.size, checkedIds.size, false)
         postEvent(EventBus.CHECK_SOURCE, notificationMsg)
-        startForeground(AppConst.notificationIdCheckSource, notificationBuilder.build())
+        startForeground(NotificationId.CheckSourceService, notificationBuilder.build())
     }
 
 }

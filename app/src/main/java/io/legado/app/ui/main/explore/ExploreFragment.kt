@@ -21,8 +21,10 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
+import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.ui.book.search.SearchScope
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.main.MainActivity
+import io.legado.app.ui.main.MainFragmentInterface
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.setEdgeEffectColor
@@ -41,8 +43,17 @@ import kotlinx.coroutines.launch
 /**
  * 发现界面
  */
-class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
-    ExploreAdapter.CallBack, MainActivity.Callback {
+class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
+    MainFragmentInterface,
+    ExploreAdapter.CallBack {
+
+    constructor(position: Int) : this() {
+        val bundle = Bundle()
+        bundle.putInt("position", position)
+        arguments = bundle
+    }
+
+    override val position: Int? get() = arguments?.getInt("position")
 
     override val viewModel by viewModels<ExploreViewModel>()
     private val binding by viewBinding(FragmentExploreBinding::bind)
@@ -55,7 +66,6 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     private val groups = linkedSetOf<String>()
     private var exploreFlowJob: Job? = null
     private var groupsMenu: SubMenu? = null
-    private var isActive = false
     private var searchKey: String? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,7 +94,9 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         searchView.onActionViewExpanded()
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.screen_find)
-        searchView.clearFocus()
+        searchView.post {
+            searchView.clearFocus()
+        }
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
@@ -113,8 +125,8 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     }
 
     private fun initGroupData() {
-        launch {
-            appDb.bookSourceDao.flowExploreGroups().flowOn(IO).conflate().collect {
+        lifecycleScope.launch {
+            appDb.bookSourceDao.flowExploreGroups().conflate().collect {
                 groups.clear()
                 groups.addAll(it)
                 upGroupsMenu()
@@ -125,7 +137,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     private fun upExploreData(searchKey: String? = null, once: Boolean = false) {
         this.searchKey = searchKey
         exploreFlowJob?.cancel()
-        exploreFlowJob = launch {
+        exploreFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrBlank() -> {
                     appDb.bookSourceDao.flowExplore()
@@ -202,25 +214,21 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         }
     }
 
+    override fun searchBook(bookSource: BookSource) {
+        startActivity<SearchActivity> {
+            putExtra("searchScope", SearchScope(bookSource).toString())
+        }
+    }
+
     fun compressExplore() {
         if (!adapter.compressExplore()) {
             binding.rvFind.scrollToPosition(0)
         }
     }
 
-    override fun onActive() {
-        isActive = true
-        upExploreData(searchKey)
-    }
-
-    override fun onInactive() {
-        isActive = false
-        exploreFlowJob?.cancel()
-    }
-
     override fun onResume() {
         super.onResume()
-        if (isActive) upExploreData(searchKey)
+        upExploreData(searchKey)
     }
 
 }

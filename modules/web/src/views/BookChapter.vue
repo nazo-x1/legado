@@ -225,7 +225,7 @@ const checkPageWidth = (readWidth) => {
 };
 watch(
   () => store.config.readWidth,
-  (width) => checkPageWidth(width)
+  (width) => checkPageWidth(width),
 );
 // 顶部底部跳转
 const top = ref();
@@ -285,8 +285,8 @@ const getContent = (index, reloadChapter = true, chapterPos = 0) => {
         chapterData.value.push({ index, content, title });
         store.setShowContent(true);
         throw err;
-      }
-    )
+      },
+    ),
   );
 };
 
@@ -403,8 +403,10 @@ const onReachBottom = (entries) => {
   }
 };
 
+let canJump = true;
 // 监听方向键
 const handleKeyPress = (event) => {
+  if (!canJump) return;
   switch (event.key) {
     case "ArrowLeft":
       event.stopPropagation();
@@ -425,7 +427,11 @@ const handleKeyPress = (event) => {
           type: "warn",
         });
       } else {
-        jump(0 - document.documentElement.clientHeight + 100);
+        canJump = false;
+        jump(0 - document.documentElement.clientHeight + 100, {
+          duration: store.config.jumpDuration,
+          callback: () => (canJump = true),
+        });
       }
       break;
     case "ArrowDown":
@@ -441,11 +447,24 @@ const handleKeyPress = (event) => {
           type: "warn",
         });
       } else {
-        jump(document.documentElement.clientHeight - 100);
+        canJump = false;
+        jump(document.documentElement.clientHeight - 100, {
+          duration: store.config.jumpDuration,
+          callback: () => (canJump = true),
+        });
       }
       break;
   }
 };
+
+// 阻止默认滚动事件
+const ignoreKeyPress = (event) => {
+  if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+};
+
 onMounted(() => {
   //获取书籍数据
   let bookUrl = sessionStorage.getItem("bookUrl");
@@ -484,6 +503,7 @@ onMounted(() => {
 
         getContent(chapterIndex, true, chapterPos);
         window.addEventListener("keyup", handleKeyPress);
+        window.addEventListener("keydown", ignoreKeyPress);
         // 兼容Safari < 14
         document.addEventListener("visibilitychange", onVisibilityChange);
         //监听底部加载
@@ -498,13 +518,14 @@ onMounted(() => {
       (err) => {
         ElMessage({ message: "获取书籍目录失败", type: "error" });
         throw err;
-      }
-    )
+      },
+    ),
   );
 });
 
 onUnmounted(() => {
   window.removeEventListener("keyup", handleKeyPress);
+  window.removeEventListener("keydown", ignoreKeyPress);
   window.removeEventListener("resize", onResize);
   // 兼容Safari < 14
   document.removeEventListener("visibilitychange", onVisibilityChange);
@@ -624,7 +645,9 @@ onUnmounted(() => {
 
 .day {
   :deep(.popup) {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.12),
+      0 0 6px rgba(0, 0, 0, 0.04);
   }
 
   :deep(.tool-icon) {
@@ -645,7 +668,9 @@ onUnmounted(() => {
 
 .night {
   :deep(.popup) {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.48), 0 0 6px rgba(0, 0, 0, 0.16);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.48),
+      0 0 6px rgba(0, 0, 0, 0.16);
   }
 
   :deep(.tool-icon) {

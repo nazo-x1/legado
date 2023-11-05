@@ -31,9 +31,9 @@ data class SearchScope(private var scope: String) {
 
     val stateLiveData = MutableLiveData(scope)
 
-    fun update(scope: String) {
+    fun update(scope: String, postValue: Boolean = true) {
         this.scope = scope
-        stateLiveData.postValue(scope)
+        if (postValue) stateLiveData.postValue(scope)
         save()
     }
 
@@ -143,9 +143,9 @@ data class SearchScope(private var scope: String) {
 
     fun save() {
         AppConfig.searchScope = scope
-        if (isAll()) {
+        if (isAll() || isSource() || scope.contains(",")) {
             AppConfig.searchGroup = ""
-        } else if (!isSource() && !scope.contains(",")) {
+        } else {
             AppConfig.searchGroup = scope
         }
     }
