@@ -173,6 +173,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private var pageChanged = false
     private var reloadContent = false
     private val autoPageRenderer by lazy { SyncedRenderer { doAutoPage(it) } }
+    private var autoPageScrollOffset = 0.0
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
@@ -503,12 +504,12 @@ class ReadBookActivity : BaseReadBookActivity(),
         val isDown = action == 0
 
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-            if (isDown && !binding.readMenu.cnaShowMenu) {
+            if (isDown && !binding.readMenu.canShowMenu) {
                 binding.readMenu.runMenuIn()
                 return true
             }
-            if (!isDown && !binding.readMenu.cnaShowMenu) {
-                binding.readMenu.cnaShowMenu = true
+            if (!isDown && !binding.readMenu.canShowMenu) {
+                binding.readMenu.canShowMenu = true
                 return true
             }
         }
@@ -844,7 +845,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         success: (() -> Unit)?
     ) {
         lifecycleScope.launch {
-            autoPageProgress = 0
+            if (relativePosition == 0) {
+                autoPageProgress = 0
+            }
             binding.readView.upContent(relativePosition, resetPageOffset)
             upSeekBarProgress()
             loadStates = false
@@ -963,12 +966,15 @@ class ReadBookActivity : BaseReadBookActivity(),
             isAutoPage = false
             autoPageRenderer.stop()
             binding.readView.invalidate()
+            binding.readView.clearNextPageBitmap()
             binding.readMenu.setAutoPage(false)
             upScreenTimeOut()
         }
     }
 
     private fun autoPagePlus() {
+        autoPageProgress = 0
+        autoPageScrollOffset = 0.0
         autoPageRenderer.start()
     }
 
@@ -981,7 +987,12 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         val readTime = ReadBookConfig.autoReadSpeed * 1000.0
         val height = binding.readView.height
-        val scrollOffset = (height / readTime * frameTime).toInt().coerceAtLeast(1)
+        autoPageScrollOffset += height / readTime * frameTime
+        if (autoPageScrollOffset < 1) {
+            return
+        }
+        val scrollOffset = autoPageScrollOffset.toInt()
+        autoPageScrollOffset -= scrollOffset
         if (binding.readView.isScroll) {
             binding.readView.curPage.scroll(-scrollOffset)
         } else {
@@ -990,6 +1001,8 @@ class ReadBookActivity : BaseReadBookActivity(),
                 autoPageProgress = 0
                 if (!binding.readView.fillPage(PageDirection.NEXT)) {
                     autoPageStop()
+                } else {
+                    binding.readView.clearNextPageBitmap()
                 }
             } else {
                 binding.readView.invalidate()

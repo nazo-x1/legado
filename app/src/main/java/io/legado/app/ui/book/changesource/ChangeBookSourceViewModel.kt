@@ -118,7 +118,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }.flowOn(IO)
 
     @Volatile
-    private var searchIndex = 0
+    private var searchIndex = -1
 
     override fun onCleared() {
         super.onCleared()
@@ -142,7 +142,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private fun initSearchPool() {
         searchPool = Executors
             .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
-        searchIndex = 0
+        searchIndex = -1
     }
 
     fun refresh(): Boolean {
@@ -195,14 +195,18 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     private fun search() {
         val searchIndex = synchronized(this) {
-            if (searchIndex > bookSourceList.lastIndex) {
+            if (searchIndex >= bookSourceList.lastIndex) {
                 return
             }
-            searchIndex++
+            ++searchIndex
         }
         val source = bookSourceList[searchIndex]
         bookSourceList[searchIndex] = emptyBookSource
-        val task = execute(context = searchPool!!, executeContext = searchPool!!) {
+        val task = execute(
+            context = searchPool!!,
+            start = CoroutineStart.LAZY,
+            executeContext = searchPool!!
+        ) {
             val resultBooks = WebBook.searchBookAwait(source, name)
             resultBooks.forEach { searchBook ->
                 if (searchBook.name != name) {
@@ -228,11 +232,14 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             .onSuccess {
                 nextSearch()
             }
+        task.start()
         tasks.add(task)
     }
 
     private suspend fun loadBookInfo(source: BookSource, book: Book) {
-        WebBook.getBookInfoAwait(source, book)
+        if (book.tocUrl.isEmpty()) {
+            WebBook.getBookInfoAwait(source, book)
+        }
         if (AppConfig.changeSourceLoadToc || AppConfig.changeSourceLoadWordCount) {
             loadBookToc(source, book)
         } else {
